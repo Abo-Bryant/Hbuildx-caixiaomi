@@ -1,0 +1,86 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		    "path" : "pages/home/home",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+    {
+            "path" : "pages/my/my",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+    {
+            "path" : "pages/manage/manage",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }  
+        
+    ],
+	"subPackages": [
+	  {
+	    "root": "subpkg",
+      "pages": [
+        {
+          "path": "product-detail/product-detail",
+          "style": {
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": false
+          }
+        }
+          ,{
+                    "path" : "product-add/product-add",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+	  }
+	],
+  "globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "菜小密",
+		"navigationBarBackgroundColor": "#e6e6e6",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+  "tabBar": {
+    "color": "#e6e6e6",
+    "selectedColor":"#515151",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "static/tab-icons/home.png",
+        "selectedIconPath": "static/tab-icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/manage/manage",
+        "text": "管理",
+        "iconPath": "static/tab-icons/manage.png",
+        "selectedIconPath": "static/tab-icons/manage-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "static/tab-icons/my.png",
+        "selectedIconPath": "static/tab-icons/my-active.png"
+      }
+    ]
+  }
+}
