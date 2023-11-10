@@ -12,7 +12,7 @@
           <scroll-view scroll-y class="right">
             <navigator class="cell" v-for="item in productShowList" :key="item.productId"  :url="`/subpkg/product-detail/product-detail?productId=${item.productId}`">
               <view class="cell-item">
-                <view class="item-text">
+                <view class="item-text" :class="{'is-active':item.state==='未启用'}" >
                   {{item.goodsName}}
                   <text class="item-type">
                     {{item.packagingType}}
@@ -24,7 +24,7 @@
           </scroll-view>
         </view>
       <view class="bottom">
-              <navigator url="/goodsAdd/goods_add/kind_manage">
+              <navigator :url="'/subpkg/kind-manage/kind-manage'">
                 <view class="bottom-btn">分类管理</view>
               </navigator>
              <navigator :url="'/subpkg/product-add/product-add'">
@@ -55,6 +55,7 @@
     },
      onShow () {
         this.getDataList()
+        this.currentIndex=0
       },
     computed: {
       // 计算属性是函数， 但是在模板html上面是当做属性去用，不能加小括号
@@ -146,6 +147,9 @@
        .cell {
            background-color: #fff;
            .cell-item {
+             .is-active{
+               color: #bfbfbf;
+             }
              // line-height: 40px;
              height: 40px;
              width: 100%;
@@ -156,6 +160,8 @@
              justify-content: space-between;
        
              .item-text {
+               font-weight: 700;
+               // color: #000;
                margin-left: 20px;
                padding-top: 10px;
                .item-type{

@@ -66,9 +66,11 @@
       },
       // 选择分类
       selectProductCategory(kindId, goodsKind) {
+        console.log(kindId, goodsKind)
         this.goodsKindOne = goodsKind
         this.selectIsShow = true
         this.$emit('changeKind',this.goodsKindOne)
+        this.$emit('changeKindId',kindId)
       },
       // 新增分类
       doAddManage() {
@@ -85,11 +87,25 @@
         this.goodsKind = value
         this.$refs.popup.close()
         this.$refs.dialogInputRef.val = ''
-        const kindIdList = this.kindList.map(item => item.kindId)
-        console.log(kindIdList);
+        let kindIdList = this.kindList.map(item => item.kindId)
+        kindIdList=kindIdList.map(Number)
+        // console.log('kindIdList',kindIdList);
+        let kindID=String(Math.max(...kindIdList)+1)
+        if(kindID.length===1){
+          kindID='000'+kindID
+        }
+        if(kindID.length===2){
+          kindID='00'+kindID
+        }
+        if(kindID.length===3){
+          kindID='0'+kindID
+        }
+        if(kindID.length===4){
+          kindID=kindID
+        }
         this.kindList = [...this.kindList, {
           goodsKind: this.addValue,
-          kindId: '000' + String(this.kindList.length + 1)
+          kindId: kindID
         }]
         console.log(this.kindList);
         uni.setStorageSync('kindList', this.kindList)

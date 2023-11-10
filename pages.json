@@ -60,6 +60,16 @@
                 }
                 
                 }
+                ,{
+                    "path" : "kind-manage/kind-manage",
+                    "style" :                                                                                    
+                {
+                   "navigationBarTitleText": "分类管理",
+                   "navigationBarBackgroundColor": "#fff",
+                   "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 	  }
 	],
