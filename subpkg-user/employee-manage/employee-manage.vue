@@ -105,8 +105,7 @@
          return abb.filter(item=> item.children)
       },
     stoplist(){
-      return this.userList.filter(item=>item.state==='未启用')
-          
+      return this.userList.filter(item=>item.state==='未启用')     
     }
     },
     methods: {
