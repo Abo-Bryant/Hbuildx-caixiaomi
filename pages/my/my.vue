@@ -31,7 +31,7 @@
 
     <!-- 订单导航 -->
     <view class="nav">
-      <navigator class="nav-item" :url="'/subpkg/product-detail/product-detail'">
+      <navigator class="nav-item" :url="'/subpkg-user/employee-manage/employee-manage'">
         <view class="nav-icon iconOne"></view>
         <text class="nav-text">员工管理</text>
       </navigator>

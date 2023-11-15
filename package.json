@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@escook/request-miniprogram": "^0.2.1"
+    "@escook/request-miniprogram": "^0.2.1",
+    "pinyin-pro": "^3.17.0"
   }
 }

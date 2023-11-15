@@ -80,8 +80,11 @@
   export default {
     data() {
       return {
+        //货品Id
         productId: '',
+        // 货品详情
         productDetail: {},
+        // 货品分类列表
         kindList: [],
       }
     },
@@ -146,6 +149,7 @@
                });
        },
       // 点击停用货品
+      // 点击停用按钮
       productStop() {
         console.log('停止')
         this.$refs.popup.open()

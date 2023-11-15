@@ -94,6 +94,7 @@
       doKindId(KindId) {
         this.KindId = KindId
       },
+     // 保存按钮
       saveAdd() {
         console.log('货品分类的Id', this.KindId, '货品分类的名字', this.valueKind, '货品名字', this.valueName, '包装类型', this
           .packagingType, '货品的单价', this.valuePrice, '销售规格的input',

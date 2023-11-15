@@ -1,90 +1,125 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-		    "path" : "pages/home/home",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		},
+  "pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
     {
-            "path" : "pages/my/my",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        },
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+
+    },
     {
-            "path" : "pages/manage/manage",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }  
-        
-    ],
-	"subPackages": [
-	  {
-	    "root": "subpkg",
+      "path": "pages/my/my",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+
+    },
+    {
+      "path": "pages/manage/manage",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+
+    }
+
+  ],
+  "subPackages": [
+    {
+    "root": "subpkg",
+    "pages": [
+      {
+        "path": "product-detail/product-detail",
+        "style": {
+          "navigationBarTitleText": "",
+          "enablePullDownRefresh": false
+        }
+      },
+      {
+        "path": "product-add/product-add",
+        "style": {
+          "navigationBarTitleText": "新增货品",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+
+      }, 
+      {
+        "path": "product-manage/product-manage",
+        "style": {
+          "navigationBarTitleText": "货品管理",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+
+      }, 
+      {
+        "path": "kind-manage/kind-manage",
+        "style": {
+          "navigationBarTitleText": "分类管理",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+      }
+    ]
+    },
+    {
+      "root":"subpkg-user",
       "pages": [
         {
-          "path": "product-detail/product-detail",
+          "path": "employee-manage/employee-manage",
           "style": {
-            "navigationBarTitleText": "",
+            "navigationBarTitleText": "员工管理",
+            "navigationBarBackgroundColor": "#fff",
             "enablePullDownRefresh": false
           }
         }
-          ,{
-                    "path" : "product-add/product-add",
+              ,{
+                    "path" : "employee-add/employee-add",
                     "style" :                                                                                    
                 {
-                   "navigationBarTitleText": "新增货品",
-                   "navigationBarBackgroundColor": "#fff",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "product-manage/product-manage",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "货品管理",
-                    "navigationBarBackgroundColor": "#fff",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "kind-manage/kind-manage",
-                    "style" :                                                                                    
-                {
-                   "navigationBarTitleText": "分类管理",
+                   "navigationBarTitleText": "添加员工",
                    "navigationBarBackgroundColor": "#fff",
                    "enablePullDownRefresh": false
                 }
                 
                 }
+                ,{
+                    "path" : "employee-detail/employee-detail",
+                    "style" :                                                                                    
+                {
+                   "navigationBarTitleText": "员工详情",
+                   "navigationBarBackgroundColor": "#fff",
+                   "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "employee-edit/employee-edit",
+                    "style" :                                                                                    
+                {
+                 "navigationBarTitleText": "修改员工",
+                 "navigationBarBackgroundColor": "#fff",
+                 "enablePullDownRefresh": false
+                }
+                
+                }
             ]
-	  }
-	],
+    }
+  ],
   "globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "菜小密",
-		"navigationBarBackgroundColor": "#40425b",
-		"backgroundColor": "#F8F8F8"
-	},
-	"uniIdRouter": {},
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "菜小密",
+    "navigationBarBackgroundColor": "#40425b",
+    "backgroundColor": "#F8F8F8"
+  },
+  "uniIdRouter": {},
   "tabBar": {
     "color": "#e6e6e6",
-    "selectedColor":"#515151",
-    "list": [
-      {
+    "selectedColor": "#515151",
+    "list": [{
         "pagePath": "pages/home/home",
         "text": "首页",
         "iconPath": "static/tab-icons/home.png",

@@ -35,6 +35,7 @@
       return {
         // 货品分类列表
         kindList:[],
+        // 货品列表
         productList:[],
         // 修改时需要用到的Id
         amendId:'',
@@ -81,6 +82,7 @@
          })
          uni.setStorageSync('kindList', this.kindList)
       },
+     // 点击删除的icon
       del(kindId){
         this.delId=kindId
         console.log('删除',kindId)
@@ -96,9 +98,11 @@
          
        }
       },
+     // 点击删除弹出框的取消
       delClose(){
          this.$refs.popupDel.close()
       },
+      // 点击删除弹出框的确认
       delConfirm(){
         this.kindList=this.kindList.filter(item=>item.kindId!==this.delId)
         uni.setStorageSync('kindList', this.kindList)
@@ -106,6 +110,7 @@
             console.log(item.kindId,this.delId)
           if(item.kindId===this.delId){
             item.kindId='0001'
+            item.kindName='未分类'
           }
         })
         console.log('this.productList',this.productList)

@@ -33,7 +33,6 @@
         placeholderStyle: "color:#96979b;font-size:16px;background-color:#f6f7fb;padding-left:10px;",
         // 货品销售单价
         valuePriceOne:this.valuePrice
-        // valuePrice:''
       };
     },
     methods:{
