@@ -31,17 +31,17 @@
          
          <view class="prevent">
            <uni-forms-item label="防乱传" name="prevent" label-width="250px">
-          				<switch :checked="false" />
+          			<switch :checked="false" />
            </uni-forms-item>
            
-           <uni-forms-item label="停用买家" name="stop" label-width="250px">
-                     				<switch :checked="false" />
+           <uni-forms-item  label="停用买家" name="stop" label-width="250px">
+                     				  <switch :checked="ischange" @change="switchChange" />
            </uni-forms-item>
          </view>
-         <navigator :url="`/subpkg-buyer/buyer-relevancy/buyer-relevancy`" class="relevancy">
+         <navigator :url="`/subpkg-buyer/buyer-relevancy/buyer-relevancy?buyerId=${buyerId}`" class="relevancy">
            <view class="text">关联</view>
            <view style="margin-right: 20px;">
-             暂无关联买家<uni-icons type="forward" size="18"></uni-icons>
+             {{linkedBuyerList.length>0?'已关联':'暂无关联买家'}}<uni-icons type="forward" size="18"></uni-icons>
            </view>
          </navigator>
          
@@ -59,24 +59,44 @@
       return {
          buyerId:'',
          buyerList:[],
-         buyerDetail:{}
+         buyerDetail:{},
+         linkedBuyerList:[]
       };
     },
     onLoad(option) {
       this.buyerId=option.buyerId
       this.getbuyerList()
-      this.getUserDetail()
+      this.getBuyerDetail()
+    },
+    computed:{
+      ischange(){
+        if(this.buyerDetail.state === '启用'){
+          return false
+        }else{
+          return true
+        }
+      }
     },
     methods:{
       getbuyerList() {
         this.buyerList = uni.getStorageSync('buyerList')
          console.log('this.buyerList',this.buyerList)
       },
-      getUserDetail() {
+      getBuyerDetail() {
         this.buyerDetail = this.buyerList.filter(item => item.buyerId === this.buyerId)[0]
-        console.log('this.buyerDetail',this.buyerDetail)
+        this.linkedBuyerList=this.buyerDetail.linkedBuyerList
+        console.log('this.buyerDetail',this.buyerDetail.linkedBuyerList)
         // this.valueName=this.buyerDetail.buyerName
       },
+      switchChange() {
+        if(this.buyerDetail.state === '启用'){
+          this.buyerDetail.state = '未启用'
+        }else{
+          this.buyerDetail.state = '启用'
+        }
+        console.log('this.buyerList' ,this.buyerList)
+         uni.setStorageSync('buyerList', this.buyerList)
+      }
     }
   }
 </script>

@@ -119,10 +119,14 @@
           buyerMobile:this.formData.mobile,
           buyerName:this.formData.name,
           state:'启用',
-          remark:this.formData.remark
+          remark:this.formData.remark,
+          linkedBuyerList:[]
         }]
         console.log('this.buyerList',this.buyerList)
          uni.setStorageSync('buyerList', this.buyerList)
+         uni.navigateBack({
+           delta: 1
+         });
  			}).catch(err =>{
  				console.log('表单错误信息：', err);
  			})

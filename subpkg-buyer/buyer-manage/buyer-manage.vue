@@ -11,7 +11,7 @@
       </view>
     </view>
     <!-- 展示列表 -->
-    <navigator :url="`/subpkg-buyer/buyer-detail/buyer-detail?buyerId=${item.buyerId}`" class="buyer-item" v-for="item in showlist" :key="item.buyerId">
+    <navigator @click="setShowList" :url="`/subpkg-buyer/buyer-detail/buyer-detail?buyerId=${item.buyerId}`" class="buyer-item" v-for="item in showlist" :key="item.buyerId">
       <view class="name">{{item.buyerName}}</view>
       <view class="mobile">{{item.buyerMobile}}</view>
     </navigator>
@@ -73,11 +73,11 @@
            // this.bossDetail = this.userList[0]
           // console.log(' this.userList', this.userList)
            uni.setStorageSync('buyerList', this.buyerList)
-           uni.navigateBack({
-             delta: 1
-           });
         }
       },
+      setShowList(){
+         uni.setStorageSync('showlist', this.showlist)
+      }
     },
   }
 </script>
