@@ -1,20 +1,21 @@
 <template>
   <view class="page">
+    <!-- 员工详情 -->
     <view class="detail">
       <!-- 头像 -->
       <view class="img">
-
       </view>
       <!-- 信息 -->
       <view class="info">
-        <view>{{userDetail.userName}}</view>
-        <view class="num">{{userDetail.mobile}}</view>
-        <view class="active">{{userDetail.role}}</view>
+        <view>{{userDetail.attributes.name}}</view>
+        <view class="num">{{userDetail.attributes.mobile}}</view>
+        <view class="active">{{userDetail.attributes.duty}}</view>
       </view>
       <!-- 编辑 -->
-      <navigator :url="`/subpkg-user/employee-edit/employee-edit?userId=${userDetail.userId}`" class="edit" v-if="ischange"></navigator>
+      <navigator :url="`/subpkg-user/employee-edit/employee-edit?userId=${userDetail.id}`" class="edit"
+        v-if="userDetail.attributes.state"></navigator>
       <!-- 禁用 -->
-      <view class="stop" v-if="ischange===false">
+      <view class="stop" v-if="userDetail.attributes.state===false">
         <view class="stoptwo">
           已停用
         </view>
@@ -27,7 +28,7 @@
       </view>
       <view class="switch">
         启用
-        <switch class="btn" :checked="ischange" @change="switchChange" />
+        <switch class="btn" :checked="userDetail.attributes.state" @change="switchChange" />
       </view>
     </view>
   </view>
@@ -37,46 +38,52 @@
   export default {
     data() {
       return {
-        //ischange: true,
-        userList: [],
+        // 当前员工的详情
         userDetail: {},
-        userId: ''
+        // 当前员工id
+        userId: null
       };
     },
     onLoad(option) {
-      console.log(option.userId, 321);
-      this.userId = option.userId
-      this.getUserList()
+      this.userId = +option.userId
       this.getUserDetail()
     },
-   computed:{
-     ischange(){
-       if(this.userDetail.state === '启用'){
-         return true
-       }else{
-         return false
-       }
-     }
-   },
-   onShow() {
-      this.getUserList()
+    onShow() {
       this.getUserDetail()
-   },
+    },
     methods: {
-      getUserList() {
-        this.userList = uni.getStorageSync('userList')
+      // 获取员工详情
+      async getUserDetail() {
+        const {
+          data: res
+        } = await uni.$http.get(`api/employees/${this.userId}`)
+        console.log('res', res)
+        this.userDetail = res.data
       },
-      getUserDetail() {
-        this.userDetail = this.userList.filter(item => item.userId === this.userId)[0]
-      },
-      switchChange() {
-        if(this.userDetail.state === '启用'){
-          this.userDetail.state = '未启用'
-        }else{
-          this.userDetail.state = '启用'
+      // 停用启用按钮
+      async switchChange(e) {
+        // 条件判断:如果是启用状态 则修改为停用 如果是停用状态 修改为启用
+        if (this.userDetail.attributes.state === true) {
+          let data = {
+            "data": {
+              "state": false
+            }
+          }
+          const {
+            data: res
+          } = await uni.$http.put(`api/employees/${this.userId}`, data)
+        } else {
+          let data = {
+            "data": {
+              "state": true
+            }
+          }
+          const {
+            data: res
+          } = await uni.$http.put(`api/employees/${this.userId}`, data)
         }
-        console.log('this.userList' ,this.userList)
-         uni.setStorageSync('userList', this.userList)
+        // 更新页面
+        this.getUserDetail()
       }
     }
   }

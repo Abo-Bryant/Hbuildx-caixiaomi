@@ -12,7 +12,7 @@
       <uni-easyinput :focus="true" v-model="valueMobile" borderColor="#1ba035" :placeholderStyle="placeholderStyle"
         placeholder="请输入电话号码,此号码将用于员工登录"></uni-easyinput>
     </view>
-
+    <!-- 员工角色 -->
     <view class="text-role">
       <view class="role">
         员工角色
@@ -49,40 +49,26 @@
         placeholderStyle: "color:#96979b;font-size:16px;background-color:#f6f7fb;padding-left:10px;",
       };
     },
-    onLoad() {
-      this.userList = uni.getStorageSync('userList')
-    },
+
     methods: {
-      save() {
-        console.log('保存', this.valueName, this.valueMobile)
-        let userIdList = this.userList.map(item => item.userId)
-        console.log('userIdList', userIdList)
-        userIdList = userIdList.map(Number)
-        console.log('userIdList', userIdList);
-        let userId = String(Math.max(...userIdList) + 1)
-        if (userId.length === 1) {
-          userId = '000' + userId
+      // 点击保存
+     async save() {
+       // 1.非空判断
+       if(this.valueName==='') return  uni.$showMsg('请填写员工姓名')
+       if(this.valueMobile==='') return  uni.$showMsg('请填写员工电话')
+       // 2.发送请求
+        let data ={
+          "data": {
+            name:this.valueName,
+            mobile:this.valueMobile,
+            state:true,
+            duty:'档口管理员'
+          }
         }
-        if (userId.length === 2) {
-          userId = '00' + userId
-        }
-        if (userId.length === 3) {
-          userId = '0' + userId
-        }
-        if (userId.length === 4) {
-          userId = userId
-        }
-        this.userList = [...this.userList, {
-          mobile: this.valueMobile,
-          role: '档口管理员',
-          shopId: '000',
-          shopName: '我的商行',
-          state: '启用',
-          userId: userId,
-          userName: this.valueName
-        }]
-        console.log('this.userList', this.userList)
-        uni.setStorageSync('userList', this.userList)
+         const {data: res} = await uni.$http.post('api/employees',data)
+         // 3.轻提示
+        uni.$showMsg('新增成功')
+        // 4.返回上一级页面
         uni.navigateBack({
           delta: 1
         });

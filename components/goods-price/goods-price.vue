@@ -2,7 +2,7 @@
   <!-- 销售单价 -->
   <view class="goods-price">
     <view class="price-unit">
-      元/斤
+      元/百斤
     </view>
     <view class="price-txet">销售单价</view>
    <view class="price-input">

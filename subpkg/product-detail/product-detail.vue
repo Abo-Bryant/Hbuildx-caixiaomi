@@ -1,30 +1,43 @@
 <template>
   <view class="page">
-    <view class="" v-if="productDetail.state === '启用'">
+    <view class="" v-if="productDetail.state === true">
       <!-- 货品名称 -->
-      <goods-name :valueName="productDetail.goodsName" @changeName="doName"></goods-name>
+      <goods-name :valueName="productDetail.name" @changeName="doName"></goods-name>
       <!-- 包装类型 -->
-      <view class="goods-type">
+      <view class="goods-type" v-if="productDetail.packageType==='sanzhuang'">
         <view class="type-txet">包装类型</view>
         <view style="font-size: 20px;">
-          {{productDetail.packagingType}}
+          散装
+        </view>
+      </view>
+      <view class="goods-type" v-if="productDetail.packageType==='dingzhuang'">
+        <view class="type-txet">包装类型</view>
+        <view style="font-size: 20px;">
+          定装
+        </view>
+      </view>
+      <view class="goods-type" v-if="productDetail.packageType==='feidingzhuang'">
+        <view class="type-txet">包装类型</view>
+        <view style="font-size: 20px;">
+          非定装
         </view>
       </view>
       <!-- 销售规格 -->
-      <goods-size v-if="productDetail.packagingType==='定装'" :pikerValue="productDetail.size"
-        :valueWeight="productDetail.sizeNum" @changeWeight="doWeight" @changePiker="doPiker"></goods-size>
+      <goods-size v-if="productDetail.packageType==='dingzhuang'" :pikerValue="productDetail.unit"
+        :valueWeight="productDetail.weight" @changeWeight="doWeight" @changePiker="doPiker"></goods-size>
       <!-- 计数单位 -->
-      <goods-tally v-if="productDetail.packagingType==='非定装'" :tallyValue="productDetail.tally"
+      <goods-tally v-if="productDetail.packageType==='feidingzhuang'" :tallyValue="productDetail.unit"
         @changeTally="doTally"></goods-tally>
       <!-- 销售单价 -->
       <goods-price :valuePrice="productDetail.price" @changePrice="doPrice"></goods-price>
       <!-- 货品分类 -->
-      <goods-classify  @changeKindId="doKindId" :valueKind="productDetail.kindName" @changeKind="doKind"></goods-classify>
+      <goods-classify @changeKindId="doKindId" :valueKind="productDetail.kind.data.attributes.title"
+        @changeKind="doKind"></goods-classify>
       <!-- 保存按钮 -->
-      <view  @click="save" class="save">
+      <view @click="save" class="save">
         保存
       </view>
-     <!-- 底部操作按钮 -->
+      <!-- 底部操作按钮 -->
       <view class="bottom">
         <view @click="productDel">
           <view class="bottom-btn del">删除货品</view>
@@ -33,7 +46,7 @@
           <view class="bottom-btn stop">停用货品</view>
         </view>
       </view>
-     <!-- 停用弹出框 -->
+      <!-- 停用弹出框 -->
       <uni-popup ref="popup" type="dialog">
         <uni-popup-dialog mode="base" content="确定要停用改商品?停用后货品无法售卖" @close="productStopClose"
           @confirm="productStopConfirm"></uni-popup-dialog>
@@ -47,22 +60,27 @@
     </view>
     <view class="stop-page" v-else>
       <view class="stop-left">
-        <view class="stop-txt">货品名称 <text class="stop-text">{{ productDetail.goodsName }}</text></view>
-        <view class="stop-txt">包装类型<text class="stop-text type">{{ productDetail.packagingType }}</text></view>
-        <view class="stop-txt" v-if="productDetail.packagingType === '定装'">销售单价<text class="stop-text">{{
-          productDetail.sizeNum
+        <view class="stop-txt">货品名称 <text class="stop-text">{{ productDetail.name }}</text></view>
+        <view class="stop-txt" v-if="productDetail.packageType === 'dingzhuang'">包装类型<text
+            class="stop-text type">定装</text></view>
+        <view class="stop-txt" v-if="productDetail.packageType === 'sanzhuang'">包装类型<text
+            class="stop-text type">散装</text></view>
+        <view class="stop-txt" v-if="productDetail.packageType === 'feidingzhuang'">包装类型<text
+            class="stop-text type">非定装</text></view>
+        <view class="stop-txt" v-if="productDetail.packageType === 'dingzhuang'">销售单价<text class="stop-text">{{
+          productDetail.weight
           +
-          '元/' + productDetail.size }}</text>
+          '元/' + productDetail.unit }}</text>
         </view>
-        <view class="stop-txt" v-if="productDetail.packagingType === '散装'">销售单价<text class="stop-text">{{
+        <view class="stop-txt" v-if="productDetail.packageType === 'sanzhuang'">销售单价<text class="stop-text">{{
           productDetail.price +
-          '元/斤' }}</text>
+          '元/百斤' }}</text>
         </view>
-        <view class="stop-txt" v-if="productDetail.packagingType === '非定装'">销售单价<text class="stop-text">{{
+        <view class="stop-txt" v-if="productDetail.packageType === 'feidingzhuang'">销售单价<text class="stop-text">{{
           productDetail.price +
-          '元/' + productDetail.tally }}</text>
+          '元/' + productDetail.unit }}</text>
         </view>
-        <view class="stop-txt">货品分类<text class="stop-text">{{ productDetail.kindName }}</text></view>
+        <view class="stop-txt">货品分类<text class="stop-text">{{ productDetail.kind.data.attributes.title}}</text></view>
       </view>
       <view class="delOrStop">
         <view class="del" @click="productDel">删除货品</view>
@@ -89,116 +107,153 @@
       }
     },
     onLoad(option) {
-      console.log(option.productId, 321);
-      this.productId = option.productId
+      // console.log(option.id, 321);
+      this.productId = +option.id
       this.getProductDetail()
-      this.getProductKindList()
     },
     methods: {
-      getProductDetail() {
-        this.productList = uni.getStorageSync('productList')
-        this.productDetail = this.productList.filter(item => item.productId === this.productId)[0]
-        console.log('this.productDetail', this.productDetail);
-      },
-      getProductKindList() {
-        this.kindList = uni.getStorageSync('kindList')
+      // 获取商品详情
+      async getProductDetail() {
+        let params = {
+          'populate[0]': 'kind'
+        }
+        const {
+          data: res
+        } = await uni.$http.get(`api/products/${ this.productId}`, params)
+        this.productDetail = res.data.attributes
       },
       doName(valueName) {
-        console.log('valueName', valueName)
-        this.productDetail.goodsName = valueName
+        // console.log('valueName', valueName)
+        this.productDetail.name = valueName
       },
       doKind(valueKind) {
-        console.log('valueName', valueKind)
-        this.productDetail.kindName = valueKind
+        // console.log('valueKind', valueKind)
+        this.productDetail.kind.data.attributes.title = valueKind
       },
       doKindId(KindId) {
-        this.productDetail.kindId = KindId
+        this.productDetail.kind.data.id = KindId
       },
       doPrice(valuePrice) {
-        console.log('valueName', valuePrice)
+        // console.log('valuePrice', valuePrice)
         this.productDetail.price = valuePrice
       },
       doWeight(valueWeight) {
-        this.productDetail.sizeNum = valueWeight
+        // console.log('valueWeight', valueWeight)
+        this.productDetail.weight = valueWeight
       },
       doPiker(pikerValue) {
-        console.log('打印', pikerValue)
-        this.productDetail.size = pikerValue
+        // console.log('pikerValue', pikerValue)
+        this.productDetail.unit = pikerValue
       },
       doTally(tallyValue) {
-        console.log('打印', tallyValue)
-        this.productDetail.tally = tallyValue
+        // console.log('tallyValue', tallyValue)
+        this.productDetail.unit = tallyValue
       },
       // 点击删除货品
       productDel() {
-        console.log('删除')
+        // console.log('删除')
         this.$refs.popupDel.open()
       },
-     // 点击删除货品弹出框的取消
+      // 点击删除货品弹出框的取消
       productDelClose() {
         this.$refs.popupDel.close()
       },
       // 点击删除货品弹出框的确认
-       productDelConfirm(){
-          console.log(typeof this.productId);
-               this.productList = this.productList.filter(item => item.productId !== this.productId)
-               console.log(this.productList);
-               uni.setStorageSync('productList', this.productList)
-               uni.navigateBack({
-                 delta: 1
-               });
-       },
-      // 点击停用货品
+      async productDelConfirm() {
+        // console.log(typeof this.productId);
+        // 1.发送请求
+        const {
+          data: res
+        } = await uni.$http.delete(`api/products/${ this.productId}`)
+
+        console.log(res)
+        // 2.轻提示
+        uni.showToast({
+          title: '删除成功',
+          duration: 5000,
+          icon: 'success'
+        });
+        // 3.返回上一级页面
+        uni.navigateBack({
+          delta: 1
+        });
+
+      },
       // 点击停用按钮
       productStop() {
-        console.log('停止')
+        // console.log('停止')
         this.$refs.popup.open()
       },
-     // 点击停用货品弹出框的取消
+      // 点击停用货品弹出框的取消
       productStopClose() {
         this.$refs.popup.close()
       },
       // 点击停用货品弹出框的确认
-      productStopConfirm() {
-        this.productList.forEach(item => {
-          if (item.productId === this.productId) {
-            item.state = '未启用'
+      async productStopConfirm() {
+        // 发送请求
+        let data = {
+          "data": {
+            state: false
           }
-        })
-        // console.log(this.productList);
-        uni.setStorageSync('productList', this.productList)
+        }
+        const {
+          data: res
+        } = await uni.$http.put(`api/products/${ this.productId}`, data)
+        // 2.轻提示
+        uni.showToast({
+          title: '成功',
+          duration: 5000,
+          icon: 'success'
+        });
+        // 3.返回上一级页面
         uni.navigateBack({
           delta: 1
         });
       },
       // 点击启用货品
-      productStart(){
-          this.productDetail.state = '启用'
-              this.productList.forEach(item => {
-                if (item.productId === this.productId) {
-                  item.state = '启用'
-                }
-              })
-              uni.setStorageSync('productList', this.productList)
+      async productStart() {
+        // 1.发送请求
+        let data = {
+          "data": {
+            state: true
+          }
+        }
+        const {
+          data: res
+        } = await uni.$http.put(`api/products/${ this.productId}`, data)
+        // 2.更新页面
+        this.getProductDetail()
       },
       // 点击保存
-      save(){
-         console.log('save');
-              this.productList.forEach(item => {
-                if (item.productId === this.productId) {
-                  item.goodsName = this.productDetail.goodsName
-                  item.size = this.productDetail.size
-                  item.price = this.productDetail.price
-                  item.kindId = this.productDetail.kindId
-                }
-              })
-              uni.setStorageSync('productList', this.productList)
-              uni.navigateBack({
-                delta: 1
-              });
+      async save() {
+        // 1.非空判断
+        if (this.productDetail.name === '') return uni.$showMsg('请输入商品名称')
+        // 2.发送请求
+        let data = {
+          "data": {
+            name: this.productDetail.name,
+            price: this.productDetail.price,
+            kind: this.productDetail.kind.data.id,
+            weight: this.productDetail.weight,
+            unit: this.productDetail.unit
+          }
+        }
+        const {
+          data: res
+        } = await uni.$http.put(`api/products/${ this.productId}`, data)
+        // 3.轻提示
+        uni.showToast({
+          title: '修改成功',
+          duration: 5000,
+          icon: 'success'
+        });
+        // 4.返回上一级页面
+        uni.navigateBack({
+          delta: 1
+        });
       }
     },
-  
+
   }
 </script>
 
@@ -365,7 +420,8 @@
         border-radius: 22px;
       }
     }
-    .save{
+
+    .save {
       position: fixed;
       bottom: 45px;
       left: 0px;
@@ -376,10 +432,10 @@
       border-radius: 22px;
       line-height: 44px;
       text-align: center;
-      background-color:#1d9d60 ;
+      background-color: #1d9d60;
       color: #fff;
       font-size: 30px;
       font-weight: 700;
     }
-   }
+  }
 </style>

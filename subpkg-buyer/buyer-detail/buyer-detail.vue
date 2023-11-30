@@ -22,6 +22,7 @@
     },
     onLoad(option) {
       this.buyerId=option.buyerId
+      console.log(typeof this.buyerId)
     }
   }
 </script>

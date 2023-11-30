@@ -5,8 +5,7 @@
       <view class="classify-txet">货品分类</view>
       <view class="classify-txettwo" ref="myInput">{{ goodsKindOne === '' ? '选择分类' : goodsKindOne }}</view>
       <view class="classify-icon">
-        <!-- <u-icon v-if="selectIsShow" name="arrow-down-fill"></u-icon>
-      <u-icon v-else name="arrow-up-fill"></u-icon> -->
+    
         <uni-icons v-if="selectIsShow" type="bottom" size="30"></uni-icons>
         <uni-icons v-else type="top" size="30"></uni-icons>
       </view>
@@ -15,8 +14,8 @@
     <!-- 货品分类的列表 -->
     <view class="classify-select" v-if="selectIsShow === false">
       <view class="select-btn active" @click="doAddManage">+新增分类</view>
-      <view class="select-btn" v-for="item in kindList" @click="selectProductCategory(item.kindId, item.goodsKind)">{{
-          item.goodsKind }}
+      <view class="select-btn" v-for="item in kindList" @click="selectProductCategory(item.id, item.name)">{{
+          item.name }}
       </view>
     </view>
 
@@ -31,6 +30,7 @@
 </template>
 
 <script>
+    import {getKindListRequest} from '../../api/kindAndProduct.js'
   export default {
     props:{
       valueKind:String
@@ -51,23 +51,42 @@
       // console.log('this.valueName',this.valueName,123)
     },
     created() {
-      this.getProductKindList()
+      this.getKindList()
+      this.getProductList()
+      
       
     },
     methods: {
-      getProductKindList() {
-        this.kindList = uni.getStorageSync('kindList')
-        // this.goodsKind=this.kindName
-        // console.log(this.goodsKind)
-      },
+     // async getKindList(){
+     //    const {data: res} = await uni.$http.get('api/kinds')
+     //    this.kindList=res.data.map(item=>{
+     //      return {
+     //        name:item.attributes.title,
+     //        id:item.id
+     //      }
+     //    })
+     // },
+     async getKindList(){
+       this.kindList = await getKindListRequest()
+       console.log('this.kindList',this.kindList)
+     },
+     async getProductList(){
+        const {data: res} = await uni.$http.get('api/products')
+        this.productList = res.data.map(item=>{
+          return {
+            id:item.id,
+           ...item.attributes
+          }
+        })
+        },
       // 货品分类的展示与隐藏
       doSelection() {
         this.selectIsShow = !this.selectIsShow
       },
       // 选择分类
-      selectProductCategory(kindId, goodsKind) {
-        console.log(kindId, goodsKind)
-        this.goodsKindOne = goodsKind
+      selectProductCategory(kindId, name) {
+        console.log(kindId, name)
+        this.goodsKindOne = name
         this.selectIsShow = true
         this.$emit('changeKind',this.goodsKindOne)
         this.$emit('changeKindId',kindId)
@@ -82,33 +101,20 @@
         this.$refs.dialogInputRef.val = ''
       },
       // 新增弹窗确认按钮
-      addConfirm(value) {
+     async addConfirm(value) {
         this.addValue = value
         this.goodsKind = value
+        if(!value) return uni.$showMsg('请填写分类名称')
+        let data ={
+          "data": {
+            title:value
+          }
+        }
+         const {data: res} = await uni.$http.post('api/kinds',data)
+         this.getKindList()
         this.$refs.popup.close()
         this.$refs.dialogInputRef.val = ''
-        let kindIdList = this.kindList.map(item => item.kindId)
-        kindIdList=kindIdList.map(Number)
-        // console.log('kindIdList',kindIdList);
-        let kindID=String(Math.max(...kindIdList)+1)
-        if(kindID.length===1){
-          kindID='000'+kindID
-        }
-        if(kindID.length===2){
-          kindID='00'+kindID
-        }
-        if(kindID.length===3){
-          kindID='0'+kindID
-        }
-        if(kindID.length===4){
-          kindID=kindID
-        }
-        this.kindList = [...this.kindList, {
-          goodsKind: this.addValue,
-          kindId: kindID
-        }]
-        console.log(this.kindList);
-        uni.setStorageSync('kindList', this.kindList)
+        
       }
     }
   }

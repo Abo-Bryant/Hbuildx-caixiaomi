@@ -1,7 +1,7 @@
 <template>
   <view class="manage-page">
     <view class="manage">
-      <view class="top">
+      <navigator :url="'/subpkg-order/order-manage/order-manage'" class="top">
         <view class="left">
           <view class="icon"> </view>
         </view>
@@ -9,7 +9,7 @@
           <view>订单管理</view>
           <view class="arrow"><uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons></view>
         </view>
-      </view>
+      </navigator>
       <navigator :url="'/subpkg-buyer/buyer-manage/buyer-manage'" class="bottom">
         <view class="left"> <view class="icon"> </view></view>
         <view class="right">

@@ -27,8 +27,7 @@
     }
 
   ],
-  "subPackages": [
-    {
+  "subPackages": [{
       "root": "subpkg",
       "pages": [{
           "path": "product-detail/product-detail",
@@ -102,8 +101,7 @@
     },
     {
       "root": "subpkg-buyer",
-      "pages": [
-     {
+      "pages": [{
         "path": "buyer-manage/buyer-manage",
         "style": {
           "navigationBarTitleText": "买家管理",
@@ -111,41 +109,94 @@
           "enablePullDownRefresh": false
         }
 
+      }, {
+        "path": "buyer-add/buyer-add",
+        "style": {
+          "navigationBarTitleText": "添加买家",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+
+      }, {
+        "path": "buyer-detail/buyer-detail",
+        "style": {
+          "navigationBarTitleText": "买家详情",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+
+      }, {
+        "path": "buyer-edit/buyer-edit",
+        "style": {
+          "navigationBarTitleText": "修改买家",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+
+      }, {
+        "path": "buyer-relevancy/buyer-relevancy",
+        "style": {
+          "navigationBarTitleText": "维护关联名单",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+
       }    ,{
-                    "path" : "buyer-add/buyer-add",
+                    "path" : "buyer-choose/buyer-choose",
                     "style" :                                                                                    
                 {
-                   "navigationBarTitleText": "添加买家",
+                    "navigationBarTitleText": "选择买家",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+    },
+    {
+      "root": "subpkg-order",
+      "pages": [{
+        "path": "order-manage/order-manage",
+        "style": {
+          "navigationBarTitleText": "订单管理",
+          "navigationBarBackgroundColor": "#fff",
+          "enablePullDownRefresh": false
+        }
+      }    ,{
+                    "path" : "order-provisional/order-provisional",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "开具订单",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "order-price/order-price",
+                    "style" :                                                                                    
+                {
+                   "navigationBarTitleText": "计算订单",
                    "navigationBarBackgroundColor": "#fff",
                    "enablePullDownRefresh": false
                 }
                 
                 }
                 ,{
-                    "path" : "buyer-detail/buyer-detail",
+                    "path" : "order-shopping/order-shopping",
                     "style" :                                                                                    
                 {
-                  "navigationBarTitleText": "买家详情",
-                  "navigationBarBackgroundColor": "#fff",
-                  "enablePullDownRefresh": false
+                    "navigationBarTitleText": "购物车",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
                 }
                 
                 }
                 ,{
-                    "path" : "buyer-edit/buyer-edit",
+                    "path" : "order-checkstand/order-checkstand",
                     "style" :                                                                                    
                 {
-                  "navigationBarTitleText": "修改买家",
-                  "navigationBarBackgroundColor": "#fff",
-                  "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "buyer-relevancy/buyer-relevancy",
-                    "style" :                                                                                    
-                {
-                   "navigationBarTitleText": "维护关联名单",
+                   "navigationBarTitleText": "收银台",
                    "navigationBarBackgroundColor": "#fff",
                    "enablePullDownRefresh": false
                 }

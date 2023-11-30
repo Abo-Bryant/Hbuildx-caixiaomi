@@ -1,10 +1,10 @@
 <template>
   <view class="page">
     <!-- 每一行列表 -->
-    <view class="item" v-for="item in kindList" :key="item.kindId">
-      <view class="item-name">{{item.goodsKind}}</view>
-      <view class="item-put" @click="amend(item.goodsKind,item.kindId)">修改</view>
-      <view class="item-del" @click="del(item.kindId)"><uni-icons type="trash" color="#fa5151" size="30"></uni-icons> </view>
+    <view class="item" v-for="item in kindList" :key="item.id">
+      <view class="item-name">{{item.name}}</view>
+      <view class="item-put" @click="amend(item.name,item.id)">修改</view>
+      <view class="item-del" @click="del(item.id)"><uni-icons type="trash" color="#fa5151" size="30"></uni-icons> </view>
     </view>
     <!-- 新增弹出框 -->
     <uni-popup ref="popup" type="dialog">
@@ -16,6 +16,7 @@
       <uni-popup-dialog ref="dialogInputRef" title='新增分类' placeholder='请输入分类名称' mode="input" message="成功消息"
         :duration="2000" :before-close="true" @close="amendCancel" @confirm="amendConfirm"></uni-popup-dialog>
     </uni-popup>
+    <!-- 删除弹出框 -->
     <uni-popup ref="popupDel" type="dialog">
       <uni-popup-dialog mode="base" content="确定要删除改分类吗？删除后,分类的货品将移至未分类中,确定要删除吗？" @close="delClose"
         @confirm="delConfirm"></uni-popup-dialog>
@@ -35,8 +36,6 @@
       return {
         // 货品分类列表
         kindList:[],
-        // 货品列表
-        productList:[],
         // 修改时需要用到的Id
         amendId:'',
         // 删除时需要的Id
@@ -44,24 +43,39 @@
         // 新增的value
         addValue:'',
         // 修改后的value
-        amendValue:''
+        amendValue:'',
+        // 商品id集合
+        productIdList:[]
       };
     },
     onLoad(){
       this.getKindList()
-      this.getProductList()
     },
     methods:{
-      getKindList(){
-        this.kindList = uni.getStorageSync('kindList')
-        this.kindList = this.kindList.filter(item => item.goodsKind !== '未分类')
-        console.log('kindList',this.kindList)
-      },
-      getProductList(){
-        this.productList = uni.getStorageSync('productList')
+      // 获取全部分类以及联合的商品
+      async getKindList(){
+        let params = {
+          'populate[0]':'products'
+        }
+         const {data: res} = await uni.$http.get('api/kinds',params)
+         console.log('res',res)
+         this.kindList=res.data.map(item=>{
+           return {
+             name:item.attributes.title,
+             id:item.id,
+             products:item.attributes.products
+           }
+         })
+         this.kindList = this.kindList.filter(item=>item.id!==13)
+         console.log('this.kindList',this.kindList)
       },
       // 点击修改按钮
       amend(goodsKind,kindId){
+        /*
+        Args:
+          goodsKind: 当前选中的分类的名字
+          kindId: 当前选中的分类的Id
+        */
         this.amendId=kindId
         this.$refs.popupAmend.open()
         this.$refs.dialogInputRef.val=goodsKind
@@ -71,31 +85,52 @@
          this.$refs.popupAmend.close()
       },
       // 点击修改的确认
-      amendConfirm(value){
+     async amendConfirm(value){
+       /*
+       Args:
+         value: 修改弹出框的值
+       */
+      // 1.赋值
          this.amendValue = value
-         this.$refs.popupAmend.close()
-         this.kindList.forEach(item=>{
-           console.log(item.kindId,this.amendId)
-           if(item.kindId===this.amendId){
-             item.goodsKind= this.amendValue
+         // 2.发请求
+         let data = {
+           "data": {
+             title:this.amendValue
            }
-         })
-         uni.setStorageSync('kindList', this.kindList)
+         }
+          const {data: res} = await uni.$http.put(`api/kinds/${this.amendId}`,data)
+          console.log(res)
+          // 3.更新页面
+          this.getKindList()
+          // 4.关闭弹窗
+         this.$refs.popupAmend.close()
       },
      // 点击删除的icon
-      del(kindId){
+     async del(kindId){
+       /*
+       Args:
+         kindId: 当前选中的分类的Id
+       */
+      // 1.赋值
         this.delId=kindId
-        console.log('删除',kindId)
-       let productKindIdList=this.productList.map(item => item.kindId)
-         console.log('productKindIdList',productKindIdList)
-       if(productKindIdList.includes(kindId)){
+        // 2.发请求
+        let params = {
+          'populate[0]':'products'
+        }
+          const {data: res} = await uni.$http.get(`api/kinds/${kindId}`,params)
+        // 3.获取当前分类所有商品的id
+          this.productIdList = res.data.attributes.products.data.map(item=>{
+            return item.id
+          })
+          // 4.判断 如果当前分类有商品的话 显示弹出框 
+       if(res.data.attributes.products.data.length>0){
          console.log('显示删除弹出框')
          this.$refs.popupDel.open()
-       }else{
+       }else{ // 否则直接删除
          console.log('直接删除')
-         this.kindList=this.kindList.filter(item=>item.kindId!==kindId)
-         uni.setStorageSync('kindList', this.kindList)
-         
+         const {data: res} = await uni.$http.delete(`api/kinds/${this.delId}`)
+         // 5.更新页面
+         this.getKindList()
        }
       },
      // 点击删除弹出框的取消
@@ -103,18 +138,25 @@
          this.$refs.popupDel.close()
       },
       // 点击删除弹出框的确认
-      delConfirm(){
-        this.kindList=this.kindList.filter(item=>item.kindId!==this.delId)
-        uni.setStorageSync('kindList', this.kindList)
-        this.productList.forEach(item=>{
-            console.log(item.kindId,this.delId)
-          if(item.kindId===this.delId){
-            item.kindId='0001'
-            item.kindName='未分类'
+     async delConfirm(){
+        console.log('this.productIdList',this.productIdList)
+         // 1.将当前分类的商品的关联id改为未分类的
+        let data = {
+          "data": {
+            kind:13
           }
+        }
+        this.productIdList.forEach(async(item)=>{
+           const {data: res} = await uni.$http.put(`api/products/${item}`,data)
+           console.log('123456',res)
         })
-        console.log('this.productList',this.productList)
-         uni.setStorageSync('productList', this.productList)
+        // 2.删除掉当前分类
+        const {data: res} = await uni.$http.delete(`api/kinds/${this.delId}`)
+        // 3.更新页面
+        this.getKindList()
+       
+        
+        
       },
       // 点击新增按钮
       add(){
@@ -126,42 +168,32 @@
         this.$refs.dialogInputRef.val = ''
       },
       // 点击新增的确认
-      addConfirm(value) {
+      async addConfirm(value) {
+        /*
+        Args:
+          value: 新增弹出框的值
+        */
+       // 1.赋值
           this.addValue = value
-          this.$refs.popup.close()
-          this.$refs.dialogInputRef.val = ''
-          let kindIdList = this.kindList.map(item => item.kindId)
-          kindIdList=kindIdList.map(Number)
-          // console.log('kindIdList',kindIdList);
-          let kindID=String(Math.max(...kindIdList)+1)
-          if(kindID.length===1){
-            kindID='000'+kindID
+         // 2.发送请求
+        let data ={
+          "data": {
+            title:value
           }
-          if(kindID.length===2){
-            kindID='00'+kindID
-          }
-          if(kindID.length===3){
-            kindID='0'+kindID
-          }
-          if(kindID.length===4){
-            kindID=kindID
-          }
-          this.kindList = [...this.kindList, {
-            goodsKind: this.addValue,
-            kindId: kindID
-          }]
-          console.log(this.kindList);
-          uni.setStorageSync('kindList', this.kindList)
+        }
+         const {data: res} = await uni.$http.post('api/kinds',data)
+         // 3.关闭弹窗
+         this.$refs.popup.close()
+         this.$refs.dialogInputRef.val = ''
+         // 4.更新页面
+         this.getKindList()
         },
-      
     }
-     
   }
 </script>
 
 <style lang="scss">
 .page{
-  
   .item{
     height: 50px;
     line-height: 50px;

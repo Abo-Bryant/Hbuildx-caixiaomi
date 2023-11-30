@@ -4,18 +4,24 @@
       <view class="m-category">
           <!-- 左侧导航 -->
           <scroll-view scroll-y class="left">
-            <view class="item" v-for="(item, index) in leftList" :key="item.kindId"
-              @click="selectProductCategory(index, item.kindId)" :class="{ active: index === currentIndex }">{{ item.goodsKind
+            <view class="item" v-for="(item, index) in leftList" :key="item.id"
+              @click="selectProductCategory(index, item.id)" :class="{ active: index === currentIndex }">{{ item.name
                    }} </view>
           </scroll-view>
          <!-- 右侧展示数据列表 -->
           <scroll-view scroll-y class="right">
-            <navigator class="cell" v-for="item in productShowList" :key="item.productId"  :url="`/subpkg/product-detail/product-detail?productId=${item.productId}`">
+            <navigator class="cell" v-for="item in productShowList" :key="item.id"  :url="`/subpkg/product-detail/product-detail?id=${item.id}`">
               <view class="cell-item">
-                <view class="item-text" :class="{'is-active':item.state==='未启用'}" >
-                  {{item.goodsName}}
-                  <text class="item-type">
-                    {{item.packagingType}}
+                <view class="item-text" :class="{'is-active':item.state===false}" >
+                  {{item.name}}
+                  <text class="item-type" v-if="item.packageType==='sanzhuang'">
+                    散装
+                  </text>
+                  <text class="item-type" v-if="item.packageType==='dingzhuang'">
+                    定装
+                  </text>
+                  <text class="item-type" v-if="item.packageType==='feidingzhuang'">
+                    非定装
                   </text>
                 </view>
                 <view class="item-icon"> </view>
@@ -23,6 +29,7 @@
             </navigator>
           </scroll-view>
         </view>
+        <!-- 下方按钮 -->
       <view class="bottom">
               <navigator :url="'/subpkg/kind-manage/kind-manage'">
                 <view class="bottom-btn">分类管理</view>
@@ -37,6 +44,7 @@
   </template>
 
 <script>
+      import {getKindListRequest} from '../../api/kindAndProduct.js'
   export default {
     data() {
       return {
@@ -51,59 +59,70 @@
       };
     },
     onLoad() {
-      this.getDataList()
+      this.getKindList()
+      this.getProductList()
     },
-     onShow () {
-        this.getDataList()
+    onShow () {
         this.currentIndex=0
+        this.getKindList()
+        this.getProductList()
       },
     computed: {
       // 计算属性是函数， 但是在模板html上面是当做属性去用，不能加小括号
       leftList() {
-        this.kindList = this.kindList.filter(item => item.goodsKind !== '未分类')
+        this.kindList = this.kindList.filter(item => item.name !== '未分类')
         return [{
-          goodsKind: '全部分类',
-          kindId: '0000'
+          name: '全部分类',
+          id: 0
         }, ...this.kindList, {
-          goodsKind: '未分类',
-          kindId: '0001'
+          name: '未分类',
+          id: 13
         }]
       },
-
     },
     methods: {
-      async getDataList() {
-        if(uni.getStorageSync('productList')){
-          this.productList = uni.getStorageSync('productList')
-          this.productShowList = uni.getStorageSync('productList')
-        }else{
-          const {data: res} = await uni.$http.get('api/goods')
-          this.productList = res.data
-          this.productShowList = res.data
-          console.log('this.productList', this.productList)
-           uni.setStorageSync('productList', this.productList)
-        }
-       if(uni.getStorageSync('kindList')){
-         this.kindList = uni.getStorageSync('kindList')
-       }else{
-         const {data: res1} = await uni.$http.get('api/goodskind')
-         this.kindList = res1.data
-          uni.setStorageSync('kindList', this.kindList)
-         // console.log(' this.kindList', this.kindList)
-       }
-        
-      },
-      selectProductCategory(index, kindId) {
+     // async getKindList(){
+     //    const {data: res} = await uni.$http.get('api/kinds')
+     //    this.kindList=res.data.map(item=>{
+     //      return {
+     //        name:item.attributes.title,
+     //        id:item.id
+     //      }
+     //    })
+     // },
+     async getKindList(){
+       this.kindList = await getKindListRequest()
+       console.log('this.kindList',this.kindList)
+     },
+     async getProductList(){
+        const {data: res} = await uni.$http.get('api/products')
+        this.productList = res.data.map(item=>{
+          return {
+            id:item.id,
+           ...item.attributes
+          }
+        })
+        this.productShowList=this.productList
+     },
+     async selectProductCategory(index, kindId) {
         /* 
         Args:
           index: 当前选中的分类的导航的下标
           kindId: 当前选中的分类的Id
         */
-       console.log(kindId)
-        if (kindId === '0000') { //'0000'表示全部商品的kindId
+        if (kindId === 0) { //0表示全部商品的id
           this.productShowList = this.productList
         } else {
-          this.productShowList = this.productList.filter(item => item.kindId === kindId)
+         let params = {
+           'populate[0]':'products'
+         }
+           const {data: res} = await uni.$http.get(`api/kinds/${kindId}`,params)
+          this.productShowList = res.data.attributes.products.data.map(item => {
+            return {
+              id:item.id,
+              ...item.attributes
+            }
+          })
         }
         this.currentIndex = index;
       },

@@ -91,12 +91,12 @@ let dictionariesList = [{
     {
       value: 'i',
       pid: '',
-      id: 'e'
+      id: 'i'
     },
     {
       value: 'j',
       pid: '',
-      id: 'e'
+      id: 'j'
     },
     {
       value: 'k',

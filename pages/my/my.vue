@@ -52,20 +52,17 @@
         </view>
         <view class="item-icon"> </view>
       </view>
-      
-        <view class="cell-item">
-          <view class="item-text">
-            设置
-          </view>
-          <view class="cell-textTip">
-            语音提示、资费设置、连接打印机
-          </view>
-          <view class="item-icon"> </view>
-        </view>
-      
-    </view>
 
-    
+      <view class="cell-item">
+        <view class="item-text">
+          设置
+        </view>
+        <view class="cell-textTip">
+          语音提示、资费设置、连接打印机
+        </view>
+        <view class="item-icon"> </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -75,16 +72,10 @@
       return {};
     },
     onLoad() {
-      this.getList()
+
     },
     methods: {
-      async getList() {
-        console.log('刘博')
-        const {
-          data: res
-        } = await uni.$http.get('api/goods')
-        console.log(res)
-      }
+
     }
   }
 </script>
@@ -227,6 +218,7 @@
       // margin-top: 30rpx;
       background-color: #fff;
       height: 80px;
+
       // border-radius: 15rpx;
       .cell-item {
         line-height: 40px;

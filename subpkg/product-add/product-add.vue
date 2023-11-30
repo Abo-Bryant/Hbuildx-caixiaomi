@@ -6,8 +6,8 @@
     <view class="goods-type">
       <view class="type-txet">包装类型</view>
       <view class="type-button">
-        <button v-for="(item, index) in goodsType" :key="index" @click="selectCate(index, item)"
-          :class="{ active: index === currentIndex }" class="btn">{{ item }}</button>
+        <button v-for="(item, index) in goodsType" :key="index" @click="selectCate(index,item.value)"
+          :class="{ active: index === currentIndex }" class="btn">{{ item.text }}</button>
       </view>
     </view>
     <!-- 销售规格 -->
@@ -46,27 +46,40 @@
         // 定装销售规格的下拉选择器的值
         pikerValue: '0',
         // 包装类型
-        packagingType: '散装',
+        packagingType: 'sanzhuang',
         // 包装类型
-        goodsType: ['散装', '定装', '非定装'],
+        goodsType: [
+          {
+          value:'sanzhuang',
+          text:'散装'
+           }, 
+           {
+           value:'dingzhuang',
+           text:'定装'
+            },
+            {
+            value:'feidingzhuang',
+            text:'非定装'
+             }],
         // 控制包装类型的下标
         currentIndex: 0,
         // input的里层样式
         placeholderStyle: "color:#96979b;font-size:16px;background-color:#f6f7fb;padding-left:10px;",
-        productList: [],
-        kindList: []
       };
     },
     onLoad() {
-      this.productList = uni.getStorageSync('productList')
-      this.kindList = uni.getStorageSync('kindList')
     },
     methods: {
-      selectCate(index, item) {
-        console.log(index, item);
+      selectCate(index, value) {
+        /*
+        Args:
+          index: 当前选中的包装类型的导航的下标
+          value: 当前选中的包装类型goodsType的value
+        */
+        console.log(index, value);
         // // 当前选中的是哪一项
         this.currentIndex = index;
-        this.packagingType = item
+        this.packagingType = value
       },
       doName(valueName) {
         console.log('打印', valueName)
@@ -95,41 +108,35 @@
         this.KindId = KindId
       },
      // 保存按钮
-      saveAdd() {
-        console.log('货品分类的Id', this.KindId, '货品分类的名字', this.valueKind, '货品名字', this.valueName, '包装类型', this
-          .packagingType, '货品的单价', this.valuePrice, '销售规格的input',
-          this.valueWeight, '定装销售规格picker的值', this.pikerValue, '非定装销售规格picker的值', this.tallyValue);
-        console.log(this.productList)
-       let productIdList=this.productList.map(item => item.productId)
-         console.log('productIdList',productIdList)
-        productIdList=productIdList.map(Number)
-        console.log('productIdList',productIdList);
-        let productID=String(Math.max(...productIdList)+1)
-        if(productID.length===1){
-          productID='00'+productID
-        }
-        if(productID.length===2){
-          productID='0'+productID
-        }
-        if(productID.length===3){
-          productID=productID
-        }
-        this.productList = [...this.productList, {
-          goodsName: this.valueName,
-          kindId: this.KindId,
-          packagingType: this.packagingType,
-          price: this.valuePrice,
-          productId: productID,
-          size: this.pikerValue,
-          sizeNum: this.valueWeight,
-          tally: this.tallyValue,
-          kindName: this.valueKind,
-          state:'启用'
-        }]
-        uni.setStorageSync('productList', this.productList)
-        uni.navigateBack({
-          delta: 1
-        });
+     async saveAdd() {
+       // 1.非空判断
+        if(this.valueName==='') return uni.$showMsg('请输入货品名称')
+        if(!this.valuePrice) return uni.$showMsg('请输入销售单价')
+        if(!this.KindId) return uni.$showMsg('请选择货品分类')
+        // 2.发送请求
+           let data ={
+            "data": {
+              name:this.valueName,
+              state:true,
+              kind:this.KindId,
+              weight:this.valueWeight,
+              unit:this.pikerValue,
+              packageType:this.packagingType,
+              price:+this.valuePrice
+            }
+          }
+           const {data: res} = await uni.$http.post('api/products',data)
+               console.log(res)
+               // 3.轻提示
+               uni.showToast({
+               	title: '添加成功',
+               	duration: 2000,
+                icon:'success'
+               });
+               // 4.返回上一页
+                 uni.navigateBack({
+                   delta: 1
+                 });
       }
     }
   }
