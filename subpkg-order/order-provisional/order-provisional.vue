@@ -16,8 +16,7 @@
         <scroll-view scroll-y class="right">
           <uni-search-bar :radius="18" bgColor="#fff" @confirm="search" @input="input"></uni-search-bar>
           <view class="cell">
-            <navigator class="cell-item"
-              :url="`/subpkg-order/order-price/order-price?productId=${item.id}`"
+            <navigator class="cell-item" :url="`/subpkg-order/order-price/order-price?productId=${item.id}`"
               v-for="item in productShowList" :key="item.id">
               <view class="item-text">
                 {{item.name}}
@@ -63,7 +62,11 @@
 </template>
 
 <script>
-  import {getKindListRequest} from '../../api/kindAndProduct.js'
+  import {
+    getKindListRequest,
+    getProductListRequest,
+    getOrderListRequest
+  } from '../../api/api.js'
   export default {
     options: {
       styleIsolation: 'shared', // 解除样式隔离
@@ -111,20 +114,27 @@
       },
     },
     methods: {
-      async getKindList(){
-      this.kindList = await getKindListRequest()
-      console.log('this.kindList',this.kindList)
-    },
+      // 获取分类
+      async getKindList() {
+        this.kindList = await getKindListRequest()
+        console.log('this.kindList', this.kindList)
+      },
+      // async getProductList() {
+      //   const {
+      //     data: res
+      //   } = await uni.$http.get('api/products')
+      //   this.productList = res.data.map(item => {
+      //     return {
+      //       id: item.id,
+      //       ...item.attributes
+      //     }
+      //   })
+      //   this.productShowList = this.productList
+      // },
+      
+      // 获取商品
       async getProductList() {
-        const {
-          data: res
-        } = await uni.$http.get('api/products')
-        this.productList = res.data.map(item => {
-          return {
-            id: item.id,
-            ...item.attributes
-          }
-        })
+        this.productList = await getProductListRequest()
         this.productShowList = this.productList
       },
       async selectProductCategory(index, kindId) {
@@ -151,12 +161,16 @@
         }
         this.currentIndex = index;
       },
-      async getOrderList() {
-        const {
-          data: res
-        } = await uni.$http.get('api/orders')
-        this.orderList = res.data
-        // console.log(res.data)
+      // async getOrderList() {
+      //   const {
+      //     data: res
+      //   } = await uni.$http.get('api/orders')
+      //   this.orderList = res.data
+      //   // console.log(res.data)
+      // },
+      // 获取订单
+      async getOrderList(){
+        this.orderList = await getOrderListRequest()
       },
       // 点击新增按钮
       add() {

@@ -1,6 +1,9 @@
 <template>
+  <!-- 收银台页面 -->
   <view class="page">
+    <!-- 选择买家和时间 -->
     <view class="top">
+      <!-- 选择买家 -->
       <view class="buyer">
         <view class="buyuer-text">
           买家
@@ -10,6 +13,7 @@
           <view class="arrow"><uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons></view>
         </view>
       </view>
+      <!-- 选择收银时间 -->
       <view class="cashier-time">
         <view class="buyuer-text">
           收银时间
@@ -20,6 +24,7 @@
         </view>
       </view>
     </view>
+    <!-- 操作数据 -->
     <view class="bottom">
       <view class="nexine">
         <!-- 应收 -->
@@ -34,24 +39,24 @@
         <!-- 优惠与多收 -->
         <view class="discounts">
           <view class="discounts-text">
-            <view class="textone" :class="{active:isDiscountsOrOvercharge===true}"
-              @click="doDiscount">
+            <view class="textone" :class="{active:isDiscountsOrOvercharge===true}" @click="doDiscount">
               优惠
             </view>
-            <view class="texttwo" :class="{active:isDiscountsOrOvercharge===false}"
-              @click="doOvercharge">
+            <view class="texttwo" :class="{active:isDiscountsOrOvercharge===false}" @click="doOvercharge">
               多收
             </view>
           </view>
-          <view class="discounts-input" :class="{borderActive:isOvercharge===false}" v-if="isDiscountsOrOvercharge===true">
+          <view class="discounts-input" :class="{borderActive:isActual===false}"
+            v-if="isDiscountsOrOvercharge===true">
             {{discountPriceValue}}
           </view>
-          <view class="discounts-input" :class="{borderActive:isOvercharge===false}" v-if="isDiscountsOrOvercharge===false" >
+          <view class="discounts-input" :class="{borderActive:isActual===false}"
+            v-if="isDiscountsOrOvercharge===false">
             {{overchargePriceValue}}
           </view>
         </view>
         <!-- 实际收取金额 -->
-        <view class="realincome " :class="{borderActive:isOvercharge===true}" @click="isOvercharge=true">
+        <view class="realincome " :class="{borderActive:isActual===true}" @click="isActual=true">
           <view class="realincome-text">实收</view>
           <view class="realincome-num">
             <view style="font-size: 18px;font-weight: 700;text-align: right;">{{actualPriceValue}}</view>
@@ -72,7 +77,7 @@
       <!-- 右边按钮 -->
       <view class="text-item">
         <view class="outsidethree" @click="clear">
-          <view class="top-next" >
+          <view class="top-next">
             AC
           </view>
         </view>
@@ -92,7 +97,9 @@
 </template>
 
 <script>
-    import {updateKeyboardValue} from '../../utils/index.js'
+  import {
+    updateKeyboardValue
+  } from '../../utils/index.js'
   export default {
     options: {
       styleIsolation: 'shared', // 解除样式隔离
@@ -104,55 +111,61 @@
     data() {
       return {
         // 应收金额
-        receivablePriceValue:null,
+        receivablePriceValue: null,
         // 优惠金额
-        discountPriceValue:'0',
+        discountPriceValue: '0',
         // 多收金额
-        overchargePriceValue:'0',
+        overchargePriceValue: '0',
         // 实际金额
-        actualPriceValue:null,
+        actualPriceValue: null,
         // 控制 是优惠还是多收
         isDiscountsOrOvercharge: true,
         // 控制 是不是实收金额
-        isOvercharge:true
+        isActual: true 
       };
     },
-    methods:{
+    methods: {
+       // 由key-words组件抛出的自定义事件
       handleChange(e) {
         console.log('e', e)
-        if (this.isOvercharge === true) {
+        // 条件判断 判断需要修改的是实收金额还是优惠多收 true的话就是修改实收金额 ， false的话就是修改优惠多收
+        if (this.isActual === true) {
           this.actualPriceValue = updateKeyboardValue(this.actualPriceValue, e)
         } else {
-          if( this.isDiscountsOrOvercharge===true){
-             this.discountPriceValue = updateKeyboardValue(this.discountPriceValue, e)
-          }else{
-             this.overchargePriceValue = updateKeyboardValue(this.overchargePriceValue, e)
+           // 条件判断 判断需要修改的是优惠金额还是多收金额 true的话就是修改优惠金额 ， false的话就是修改多收金额
+          if (this.isDiscountsOrOvercharge === true) {
+            this.discountPriceValue = updateKeyboardValue(this.discountPriceValue, e)
+          } else {
+            this.overchargePriceValue = updateKeyboardValue(this.overchargePriceValue, e)
           }
-         
         }
       },
-      doDiscount(){
-        this.isDiscountsOrOvercharge=true
-        this.isOvercharge=false
+      // 点击优惠
+      doDiscount() {
+        this.isDiscountsOrOvercharge = true
+        this.isActual = false
       },
-      doOvercharge(){
-        this.isDiscountsOrOvercharge=false
-        this.isOvercharge=false
+      // 点击多收
+      doOvercharge() {
+        this.isDiscountsOrOvercharge = false
+        this.isActual = false
       },
-      clear(){
-        if (this.isOvercharge === true) {
+      clear() {
+         // 条件判断 判断需要清空的是实收金额还是优惠多收 true的话就是清空实收金额 ， false的话就是清空优惠多收
+        if (this.isActual === true) {
           this.actualPriceValue = '0'
         } else {
-          if( this.isDiscountsOrOvercharge===true){
-             this.discountPriceValue = '0'
-          }else{
-             this.overchargePriceValue = '0'
+           // 条件判断 判断需要清空的是优惠金额还是多收金额 true的话就是清空优惠金额 ， false的话就是清空多收金额
+          if (this.isDiscountsOrOvercharge === true) {
+            this.discountPriceValue = '0'
+          } else {
+            this.overchargePriceValue = '0'
           }
-         
+
         }
       }
       // doOvercharge(){},
-      
+
     }
   }
 </script>

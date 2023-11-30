@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import {getKindListRequest} from '../../api/kindAndProduct.js'
+import {getKindListRequest} from '../../api/api.js'
   export default {
     data() {
       return {

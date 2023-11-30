@@ -1,9 +1,12 @@
 <template>
   <view class="page">
+    <!-- 商品的名字和包装类型 -->
     <view class="top">
+      <!-- 商品的名字 -->
       <view class="name">
         {{productDetail.name}}
       </view>
+     <!-- 商品的包装类型 -->
       <view class="type" v-if="productDetail.packageType==='sanzhuang'">
         散装
       </view>
@@ -14,8 +17,10 @@
         非定装
       </view>
     </view>
+    <!-- 输入重量和单价 -->
     <view class="bottom">
-      <view class="weight" @click="currentIndex=true" :class="{active:currentIndex===true}">
+      <!-- 重量 -->
+      <view class="weight" @click="currentHighlight=true" :class="{active:currentHighlight===true}">
         <view class="text">
           重量（斤）
         </view>
@@ -23,8 +28,8 @@
           {{weightValue}}
         </view>
       </view>
-
-      <view class="price" :class="{active:currentIndex===false}" @click="currentIndex=false">
+      <!-- 单价 -->
+      <view class="price" :class="{active:currentHighlight===false}" @click="currentHighlight=false">
         <view class="text">
           单价（元/百斤）
         </view>
@@ -36,15 +41,20 @@
     <view class="lastprice">
        上次售价
      </view>
+    <!-- 模拟键盘 -->
     <view class="key-words">
+      <!-- 键盘左侧数字组件 -->
       <key-words @change="handleChange" ref="keyboard"></key-words>
+      <!-- 键盘右侧功能按钮 -->
       <view class="text-item">
+        <!-- 下一项按钮 -->
         <view class="outsideone" @click="next">
           <view class="top-next">
             下一项
           </view>
         </view>
-        <view class="outsidetwo" @click="back">
+        <!-- 确认按钮 -->
+        <view class="outsidetwo" @click="sure">
           <view class="bottom-sure">
             确认
           </view>
@@ -58,24 +68,30 @@
   import {updateKeyboardValue} from '../../utils/index.js'
   export default {
     onLoad(option) {
-      // console.log(option)
       this.productId = option.productId
       this.orderId = option.orderId
       this.getProductDetail()
-      // this.getOrderProductDetail()
     },
     data() {
       return {
-        currentIndex: true,
+        // 当前高亮
+        currentHighlight: true,
+        //订单id
         orderId:'',
+        // 订单详情
         orderDetail:{},
+        // 商品id
         productId:'',
+        // 商品详情
         productDetail:{},
+        // 初始重量的值
         weightValue: '0'
       };
     },
     methods: {
+      // 获取商品的详情
      async getProductDetail() {
+       // 条件判断 如果当前页面productId不为undefined,说明是从开具订单页面点入的当前页面
        if(this.productId!==undefined){
          let params = {
            'populate[0]': 'kind'
@@ -83,26 +99,27 @@
          const {
            data: res
          } = await uni.$http.get(`api/products/${ this.productId}`, params)
-         // console.log('res.data',res.data)
          this.productDetail = {...res.data.attributes,id:res.data.id}
-         // console.log('this.productDetail',this.productDetail)
-       }else if(this.orderId!==undefined){
+       }
+        // 条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
+       else if(this.orderId!==undefined){
          console.log('123')
          const {
            data: res
          } = await uni.$http.get(`api/orders/${this.orderId}`)
-         // console.log('res.data',res.data)
          this.productDetail = res.data.attributes.productDetail
          this.weightValue=this.productDetail.weightValue
-         
-         // console.log('this.productDetail',this.productDetail)
        }
      },
+      // 点击下一项按钮
       next() {
-        this.currentIndex=!this.currentIndex
+        this.currentHighlight=!this.currentHighlight
       },
-      async back(){
+      // 点击确认按钮
+      async sure(){
+        // 1.条件判断 如果当前页面productId不为undefined,说明是从开具订单页面点入的当前页面
         if(this.productId!==undefined){
+          // 2.发送请求
           let data ={
             "data": {
              productDetail:{
@@ -112,13 +129,16 @@
             }
           }
            const {data: res} = await uni.$http.post('api/orders',data)
-           // console.log(res)
+           // 3.轻提示
            uni.$showMsg('加入购物车')
+           // 4.返回上一级页面
           uni.navigateBack({
             delta: 1
           })
-        }else if(this.orderId!==undefined){
-          console.log('修改',this.productDetail,+this.weightValue)
+        }
+         // 1.条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
+        else if(this.orderId!==undefined){
+          // 2.发送请求
           let data = {
             "data": {
                 productDetail: {
@@ -128,19 +148,18 @@
               }
           }
            const {data: res} = await uni.$http.put(`api/orders/${ this.orderId}`,data)
-           console.log('res',res)
+           // 3.轻提示
            uni.$showMsg('修改成功')
+           // 4.返回上一级页面
            uni.navigateBack({
              delta: 1
            })
         }
-         // console.log( this.weightValue, this.priceValue,this.name)
-        
        },
-      
+      // 由key-words组件抛出的自定义事件
       handleChange(e) {
-        // console.log('e', )
-        if (this.currentIndex === true) {
+        // 条件判断 修改的是重量的值还是单价的值
+        if (this.currentHighlight === true) {
           this.weightValue = updateKeyboardValue(this.weightValue.toString(), e)
         } else {
           this.productDetail.price = updateKeyboardValue(this.productDetail.price.toString(), e)

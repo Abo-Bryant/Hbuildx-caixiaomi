@@ -44,3 +44,28 @@ export function updateKeyboardValue(currentValue, keyboardValue) {
         }
         return +currentValue
       }
+      
+// export const selectProductCategoryTool = async (index,kindId)=>{
+//   /*
+//   Args:
+//     index: 当前选中的分类的导航的下标
+//     kindId: 当前选中的分类的Id
+//   */
+//   if (kindId === 0) { //0表示全部商品的id
+//     this.productShowList = this.productList
+//   } else {
+//     let params = {
+//       'populate[0]': 'products'
+//     }
+//     const {
+//       data: res
+//     } = await uni.$http.get(`api/kinds/${kindId}`, params)
+//     this.productShowList = res.data.attributes.products.data.map(item => {
+//       return {
+//         id: item.id,
+//         ...item.attributes
+//       }
+//     })
+//   }
+//   this.currentIndex = index;
+// }

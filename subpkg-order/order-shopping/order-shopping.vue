@@ -82,6 +82,9 @@
 </template>
 
 <script>
+  import {
+    getOrderListRequest
+  } from '../../api/api.js'
   export default {
     data() {
       return {
@@ -121,13 +124,18 @@
       }
     },
     methods: {
+      
       // 获取订单列表
-      async getOrderList() {
-        const {
-          data: res
-        } = await uni.$http.get('api/orders')
-        this.orderList = res.data
-        // console.log(res.data)
+      // async getOrderList() {
+      //   const {
+      //     data: res
+      //   } = await uni.$http.get('api/orders')
+      //   this.orderList = res.data
+      //   // console.log(res.data)
+      // },
+       // 获取订单列表
+      async getOrderList(){
+        this.orderList = await getOrderListRequest()
       },
       // 点击删除货品
       productDel(id) {

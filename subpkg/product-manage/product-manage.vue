@@ -44,7 +44,7 @@
   </template>
 
 <script>
-      import {getKindListRequest} from '../../api/kindAndProduct.js'
+      import {getKindListRequest,getProductListRequest} from '../../api/api.js'
   export default {
     data() {
       return {
@@ -94,15 +94,19 @@
        this.kindList = await getKindListRequest()
        console.log('this.kindList',this.kindList)
      },
-     async getProductList(){
-        const {data: res} = await uni.$http.get('api/products')
-        this.productList = res.data.map(item=>{
-          return {
-            id:item.id,
-           ...item.attributes
-          }
-        })
-        this.productShowList=this.productList
+     // async getProductList(){
+     //    const {data: res} = await uni.$http.get('api/products')
+     //    this.productList = res.data.map(item=>{
+     //      return {
+     //        id:item.id,
+     //       ...item.attributes
+     //      }
+     //    })
+     //    this.productShowList=this.productList
+     // },
+     async getProductList() {
+       this.productList = await getProductListRequest()
+       this.productShowList = this.productList
      },
      async selectProductCategory(index, kindId) {
         /* 
