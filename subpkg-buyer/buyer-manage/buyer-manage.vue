@@ -32,6 +32,7 @@
 </template>
 
 <script>
+     import {getBuyerListRequest} from '../../api/api.js'
   export default {
     data() {
       return {
@@ -61,20 +62,24 @@
       },
     },
     methods: {
-      // 获取全部买家数据列表
-      async getBuyerList() {
-        const {
-          data: res
-        } = await uni.$http.get('api/buyers')
-        console.log('res ', res)
-        this.buyerList = res.data.map(item => {
-          return {
-            id: item.id,
-            ...item.attributes
-          }
-        })
-        // console.log('this.buyerList ', this.buyerList)
+      // 获取全部买家
+      async getBuyerList(){
+         this.buyerList=await getBuyerListRequest()
       },
+      // 获取全部买家数据列表
+      // async getBuyerList() {
+      //   const {
+      //     data: res
+      //   } = await uni.$http.get('api/buyers')
+      //   console.log('res ', res)
+      //   this.buyerList = res.data.map(item => {
+      //     return {
+      //       id: item.id,
+      //       ...item.attributes
+      //     }
+      //   })
+      //   // console.log('this.buyerList ', this.buyerList)
+      // },
       // 搜索栏的input事件
       input(v) {
         console.log(v)

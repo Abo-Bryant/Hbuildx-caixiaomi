@@ -65,6 +65,7 @@
 </template>
 
 <script>
+  import { mapMutations} from 'vuex'
   import {updateKeyboardValue} from '../../utils/index.js'
   export default {
     onLoad(option) {
@@ -89,6 +90,7 @@
       };
     },
     methods: {
+      ...mapMutations('m_cart',['addToCart']),
       // 获取商品的详情
      async getProductDetail() {
        // 条件判断 如果当前页面productId不为undefined,说明是从开具订单页面点入的当前页面
@@ -119,16 +121,21 @@
       async sure(){
         // 1.条件判断 如果当前页面productId不为undefined,说明是从开具订单页面点入的当前页面
         if(this.productId!==undefined){
-          // 2.发送请求
-          let data ={
-            "data": {
-             productDetail:{
-                ...this.productDetail,
-               weightValue:+this.weightValue,
-             }
-            }
+          // 2.将数据存入vuex
+          const goods = {
+            ...this.productDetail,
+                 weightValue:+this.weightValue,
           }
-           const {data: res} = await uni.$http.post('api/orders',data)
+          this.addToCart(goods)
+          // let data ={
+          //   "data": {
+          //    productDetail:{
+          //       ...this.productDetail,
+          //      weightValue:+this.weightValue,
+          //    }
+          //   }
+          // }
+          //  const {data: res} = await uni.$http.post('api/orders',data)
            // 3.轻提示
            uni.$showMsg('加入购物车')
            // 4.返回上一级页面

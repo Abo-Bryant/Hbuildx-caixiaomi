@@ -48,11 +48,11 @@
           </view>
           <view class="discounts-input" :class="{borderActive:isActual===false}"
             v-if="isDiscountsOrOvercharge===true">
-            {{discountPriceValue}}
+            {{discountOrOverchargePriceValue}}
           </view>
           <view class="discounts-input" :class="{borderActive:isActual===false}"
             v-if="isDiscountsOrOvercharge===false">
-            {{overchargePriceValue}}
+            {{discountOrOverchargePriceValue}}
           </view>
         </view>
         <!-- 实际收取金额 -->
@@ -105,19 +105,32 @@
       styleIsolation: 'shared', // 解除样式隔离
     },
     onLoad(option) {
-      this.actualPriceValue = option.totalPrice
+      // this.actualPriceValue = option.totalPrice
       this.receivablePriceValue = option.totalPrice
+    },
+    computed:{
+      actualPriceValue(){
+        if(this.discountPriceValue==='0'){
+          return this.receivablePriceValue
+        }
+        else if(this.discountPriceValue!=='0'&&this.isDiscountsOrOvercharge===false){
+          return +this.receivablePriceValue+this.discountPriceValue
+        }
+        else if(this.discountPriceValue!=='0'&&this.isDiscountsOrOvercharge===true){
+          return +this.receivablePriceValue-this.discountPriceValue
+        }
+      }
     },
     data() {
       return {
         // 应收金额
         receivablePriceValue: null,
-        // 优惠金额
-        discountPriceValue: '0',
-        // 多收金额
-        overchargePriceValue: '0',
+        // 优惠或者多收金额
+        discountOrOverchargePriceValue: '0',
+        // // 金额
+        // overchargePriceValue: '0',
         // 实际金额
-        actualPriceValue: null,
+        // actualPriceValue: null,
         // 控制 是优惠还是多收
         isDiscountsOrOvercharge: true,
         // 控制 是不是实收金额
@@ -149,6 +162,7 @@
       doOvercharge() {
         this.isDiscountsOrOvercharge = false
         this.isActual = false
+        
       },
       clear() {
          // 条件判断 判断需要清空的是实收金额还是优惠多收 true的话就是清空实收金额 ， false的话就是清空优惠多收

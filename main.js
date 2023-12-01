@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import App from './App'
+import store from '@/store/store.js'
+
+// 导入网络请求的包
 import {$http} from '@escook/request-miniprogram'
 uni.$http=$http
 // $http.baseUrl = 'https://www.fastmock.site/mock/a70ae7448faa7c23113d82ec2ec97f8f/_abo-990716/'
@@ -23,6 +26,7 @@ uni.$showMsg = function(title='数据请求失败',duration=1500){
 Vue.config.productionTip = false
 App.mpType = 'app'
 const app = new Vue({
-  ...App
+  ...App,
+  store
 })
 app.$mount()

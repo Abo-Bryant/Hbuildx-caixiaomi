@@ -46,7 +46,7 @@
           合计: {{totalPrice}} 元
         </view>
         <view class="true">
-          <view class="true-text">({{orderList.length}}种)选好了</view>
+          <view class="true-text">({{cart.length}}种)选好了</view>
           <view class="arrow">
             <uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons>
           </view>
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+  import {mapState,mapGetters} from 'vuex'
   import {
     getKindListRequest,
     getProductListRequest,
@@ -97,6 +98,8 @@
       this.getOrderList()
     },
     computed: {
+      ...mapState('m_cart',['cart']),
+      ...mapGetters('m_cart',['totalPrice']),
       // 计算属性是函数， 但是在模板html上面是当做属性去用，不能加小括号
       leftList() {
         this.kindList = this.kindList.filter(item => item.name !== '未分类')
@@ -105,13 +108,13 @@
           id: 0
         }, ...this.kindList]
       },
-      totalPrice() {
-        let newPrice = 0
-        this.orderList.forEach(item => {
-          newPrice += item.attributes.productDetail.price * item.attributes.productDetail.weightValue / 100
-        })
-        return newPrice
-      },
+      // totalPrice() {
+      //   let newPrice = 0
+      //   this.orderList.forEach(item => {
+      //     newPrice += item.attributes.productDetail.price * item.attributes.productDetail.weightValue / 100
+      //   })
+      //   return newPrice
+      // },
     },
     methods: {
       // 获取分类

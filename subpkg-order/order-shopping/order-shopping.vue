@@ -5,7 +5,7 @@
       <view class="call">
         买家:
         <text class="name">
-          临时客户
+          {{buyerName}}
         </text>
       </view>
       <view class="arrow"><uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons></view>
@@ -17,12 +17,12 @@
         <view class="text">
           订单货品
         </view>
-        <view class="continueadd" @click="addpro" v-if="orderList.length>0">
+        <view class="continueadd" @click="addpro" v-if="cart.length>0">
           + 继续添加
         </view>
       </view>
       <!-- 如果没有货品展示的页面 -->
-      <view class="product" v-if="orderList.length===0">
+      <view class="product" v-if="cart.length===0">
         <view class="text">
           您还未添加任何货品进购物车
         </view>
@@ -31,7 +31,7 @@
         </view>
       </view>
       <!-- 如果有货品展示的页面 -->
-      <view class="prolist" v-if="orderList.length>0">
+      <view class="prolist" v-if="cart.length>0">
         <!-- 名称 -->
         <view class="first">
           <view class="right">货品</view>
@@ -43,13 +43,13 @@
           </view>
         </view>
         <scroll-view scroll-y style="height: 315px;">
-          <navigator class="pro-item" v-for="(item,index) in orderList" :key="item.id"
+          <navigator class="pro-item" v-for="(item,index) in cart" :key="item.id"
             :url="`/subpkg-order/order-price/order-price?orderId=${item.id}`">
-            <view class="right">{{index+1}}.{{item.attributes.productDetail.name}}</view>
+            <view class="right">{{index+1}}.{{item.name}}</view>
             <view class="left">
-              <view>{{item.attributes.productDetail.weightValue}}斤</view>
-              <view style="margin-right: 10px;">{{item.attributes.productDetail.price}}</view>
-              <view>{{item.attributes.productDetail.weightValue*item.attributes.productDetail.price/100}}</view>
+              <view>{{item.weightValue}}斤</view>
+              <view style="margin-right: 10px;">{{item.price}}</view>
+              <view>{{item.weightValue*item.price/100}}</view>
               <view @click="productDel(item.id)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
             </view>
           </navigator>
@@ -82,12 +82,14 @@
 </template>
 
 <script>
-  import {
-    getOrderListRequest
-  } from '../../api/api.js'
+  import {mapState,mapGetters} from 'vuex'
+  // import {
+  //   getOrderListRequest
+  // } from '../../api/api.js'
   export default {
     data() {
       return {
+        buyerName:'临时客户',
         // 删除Id
         delId: "",
         // 订单列表
@@ -95,33 +97,35 @@
       };
     },
     onLoad() {
-      this.getOrderList()
+      // this.getOrderList()
     },
     onShow() {
-      this.getOrderList()
+      // this.getOrderList()
     },
     computed: {
+            ...mapState('m_cart',['cart']),
+            ...mapGetters('m_cart',['totalPrice','totalWeight']),
       // 总金额
-      totalPrice() {
-        let newPrice = 0
-        this.orderList.forEach(item => {
-          // console.log(item.attributes.productDetail.price)
-          // console.log(item.attributes.productDetail.weightValue)
-          newPrice += item.attributes.productDetail.price * item.attributes.productDetail.weightValue / 100
-        })
-        return newPrice
-        // console.log(newPrice)
-      },
+      // totalPrice() {
+      //   let newPrice = 0
+      //   this.orderList.forEach(item => {
+      //     // console.log(item.attributes.productDetail.price)
+      //     // console.log(item.attributes.productDetail.weightValue)
+      //     newPrice += item.attributes.productDetail.price * item.attributes.productDetail.weightValue / 100
+      //   })
+      //   return newPrice
+      //   // console.log(newPrice)
+      // },
       // 总重量
-      totalWeight() {
-        let newWeight = 0
-        this.orderList.forEach(item => {
-          console.log(item.attributes.productDetail.price)
-          // console.log(item.attributes.productDetail.weightValue)
-          newWeight += item.attributes.productDetail.weightValue
-        })
-        return newWeight
-      }
+      // totalWeight() {
+      //   let newWeight = 0
+      //   this.orderList.forEach(item => {
+      //     console.log(item.attributes.productDetail.price)
+      //     // console.log(item.attributes.productDetail.weightValue)
+      //     newWeight += item.attributes.productDetail.weightValue
+      //   })
+      //   return newWeight
+      // }
     },
     methods: {
       
@@ -134,9 +138,9 @@
       //   // console.log(res.data)
       // },
        // 获取订单列表
-      async getOrderList(){
-        this.orderList = await getOrderListRequest()
-      },
+      // async getOrderList(){
+      //   this.orderList = await getOrderListRequest()
+      // },
       // 点击删除货品
       productDel(id) {
         // console.log('删除')

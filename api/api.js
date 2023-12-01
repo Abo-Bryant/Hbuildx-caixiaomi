@@ -26,11 +26,24 @@ export const getProductListRequest = async () => {
   })
   return list
 }
-// 获取订单
-export const getOrderListRequest = async () => {
-  const {
-    data: res
-  } = await uni.$http.get('api/orders')
-  let list = res.data
-  return list
-}
+// 获取全部买家数据列表
+export const getBuyerListRequest = async () => {
+    const {
+      data: res
+    } = await uni.$http.get('api/buyers')
+    let list = res.data.map(item => {
+      return {
+        id: item.id,
+        ...item.attributes
+      }
+    })
+    return list
+  }
+  // 获取订单
+  export const getOrderListRequest = async () => {
+    const {
+      data: res
+    } = await uni.$http.get('api/orders')
+    let list = res.data
+    return list
+  }

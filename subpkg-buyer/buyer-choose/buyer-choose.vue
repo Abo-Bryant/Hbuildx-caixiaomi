@@ -15,7 +15,7 @@
       <view class="temporary-text">
         {{item.name}}
       </view>
-      <view class="temporary-choose">
+      <view class="temporary-choose" @click="doChoose(item.name,item.id)">
         选择
       </view>
     </view>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+   import {getBuyerListRequest} from '../../api/api.js'
   export default {
     data() {
       return {
@@ -50,16 +51,31 @@
       input(){},
       // 获取全部买家
       async getBuyerList(){
-         const {data: res} = await uni.$http.get('api/buyers')
-         console.log('res ',res )
-          this.buyerList = res.data.map(item=>{
-            return {
-              id:item.id,
-              ...item.attributes
-            }
-          })
-          console.log('this.buyerList ',this.buyerList )
+         this.buyerList=await getBuyerListRequest()
+         console.log( this.buyerList)
       },
+      // async getBuyerList(){
+      //    const {data: res} = await uni.$http.get('api/buyers')
+      //    console.log('res ',res )
+      //     this.buyerList = res.data.map(item=>{
+      //       return {
+      //         id:item.id,
+      //         ...item.attributes
+      //       }
+      //     })
+      //     console.log('this.buyerList ',this.buyerList )
+      // },
+      doChoose(name,id){
+        
+        let pages = getCurrentPages(); // 当前页页⾯实例
+        let nowPage = pages[pages.length -1]; //当前页⾯实例
+        let prevPage = pages[pages.length -2]; // 上一页面实例
+        console.log(prevPage,name,id)
+        prevPage.$vm.buyerName = name
+        uni.navigateBack({  //uni.navigateTo跳转的返回，默认1为返回上一级
+        		delta: 1
+        	});
+      }
     }
   }
 </script>
