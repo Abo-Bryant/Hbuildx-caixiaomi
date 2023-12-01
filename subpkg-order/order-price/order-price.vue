@@ -65,13 +65,17 @@
 </template>
 
 <script>
-  import { mapMutations} from 'vuex'
+  import {mapState, mapMutations} from 'vuex'
   import {updateKeyboardValue} from '../../utils/index.js'
   export default {
     onLoad(option) {
+      console.log(typeof option.orderId)
       this.productId = option.productId
       this.orderId = option.orderId
       this.getProductDetail()
+    },
+    computed:{
+      ...mapState('m_cart',['cart']), 
     },
     data() {
       return {
@@ -90,7 +94,7 @@
       };
     },
     methods: {
-      ...mapMutations('m_cart',['addToCart']),
+      ...mapMutations('m_cart',['addToCart','updateCart']),
       // 获取商品的详情
      async getProductDetail() {
        // 条件判断 如果当前页面productId不为undefined,说明是从开具订单页面点入的当前页面
@@ -105,12 +109,14 @@
        }
         // 条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
        else if(this.orderId!==undefined){
-         console.log('123')
-         const {
-           data: res
-         } = await uni.$http.get(`api/orders/${this.orderId}`)
-         this.productDetail = res.data.attributes.productDetail
+         this.productDetail=this.cart.filter(item=>item.id==this.orderId)[0]
          this.weightValue=this.productDetail.weightValue
+         console.log('123',this.productDetail)
+         // const {
+         //   data: res
+         // } = await uni.$http.get(`api/orders/${this.orderId}`)
+         // this.productDetail = res.data.attributes.productDetail
+         // this.weightValue=this.productDetail.weightValue
        }
      },
       // 点击下一项按钮
@@ -146,15 +152,20 @@
          // 1.条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
         else if(this.orderId!==undefined){
           // 2.发送请求
-          let data = {
-            "data": {
-                productDetail: {
-                  ...this.productDetail,
-                  weightValue:+this.weightValue,
-                }
-              }
+          // let data = {
+          //   "data": {
+          //       productDetail: {
+          //         ...this.productDetail,
+          //         weightValue:+this.weightValue,
+          //       }
+          //     }
+          // }
+          //  const {data: res} = await uni.$http.put(`api/orders/${ this.orderId}`,data)
+          const goods = {
+            ...this.productDetail,
+                 weightValue:+this.weightValue,
           }
-           const {data: res} = await uni.$http.put(`api/orders/${ this.orderId}`,data)
+          this.updateCart(goods)
            // 3.轻提示
            uni.$showMsg('修改成功')
            // 4.返回上一级页面

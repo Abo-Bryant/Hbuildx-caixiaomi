@@ -26,6 +26,15 @@ export default {
     delCart(state,payload){
       state.cart=state.cart.filter(item=>item.id!==payload)
     },
+    updateCart(state,payload){
+      console.log(payload)
+      state.cart.forEach(item=>{
+        if(item.id===payload.id){
+          item.price=payload.price
+          item.weightValue=payload.weightValue
+        }
+      })
+    },
     saveToStorage(state){
       uni.setStorageSync('cart',JSON.stringify(state.cart))
     }
