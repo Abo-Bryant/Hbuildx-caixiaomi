@@ -23,6 +23,9 @@ export default {
       console.log(state.cart)
       this.commit('m_cart/saveToStorage')
     },
+    delCart(state,payload){
+      state.cart=state.cart.filter(item=>item.id!==payload)
+    },
     saveToStorage(state){
       uni.setStorageSync('cart',JSON.stringify(state.cart))
     }

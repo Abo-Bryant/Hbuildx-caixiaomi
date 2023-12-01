@@ -50,9 +50,10 @@
               <view>{{item.weightValue}}斤</view>
               <view style="margin-right: 10px;">{{item.price}}</view>
               <view>{{item.weightValue*item.price/100}}</view>
-              <view @click="productDel(item.id)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
+               <view @click="productDel(item.id)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
             </view>
           </navigator>
+         
         </scroll-view>
       </view>
     </view>
@@ -82,7 +83,7 @@
 </template>
 
 <script>
-  import {mapState,mapGetters} from 'vuex'
+  import {mapState,mapGetters,mapMutations} from 'vuex'
   // import {
   //   getOrderListRequest
   // } from '../../api/api.js'
@@ -141,6 +142,7 @@
       // async getOrderList(){
       //   this.orderList = await getOrderListRequest()
       // },
+      ...mapMutations('m_cart',['delCart']),
       // 点击删除货品
       productDel(id) {
         // console.log('删除')
@@ -153,21 +155,23 @@
       },
       // 点击删除货品弹出框的确认
       async productDelConfirm() {
+        
         // console.log(typeof this.productId);
         // 1.发送请求
-        const {
-          data: res
-        } = await uni.$http.delete(`api/orders/${ this.delId}`)
+        // const {
+        //   data: res
+        // } = await uni.$http.delete(`api/orders/${ this.delId}`)
 
-        // console.log(res)
+        console.log(this.delId,this.cart)
+        this.delCart(this.delId)
         // 2.轻提示
-        uni.showToast({
-          title: '删除成功',
-          duration: 5000,
-          icon: 'success'
-        });
+        // uni.showToast({
+        //   title: '删除成功',
+        //   duration: 5000,
+        //   icon: 'success'
+        // });
         // 3.更新数据
-        this.getOrderList()
+        // this.getOrderList()
 
 
       },
