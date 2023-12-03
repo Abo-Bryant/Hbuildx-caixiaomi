@@ -125,7 +125,8 @@
         const {
           data: res
         } = await uni.$http.get('api/employees')
-
+  // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         this.userList = res.data.map(item => {
           return {
             id: item.id,

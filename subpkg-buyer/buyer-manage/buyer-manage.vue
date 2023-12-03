@@ -20,7 +20,7 @@
     <navigator style="color:#bfbfbf ;" class="buyer-item"
       :url="`/subpkg-buyer/buyer-detail/buyer-detail?buyerId=${item.id}`" v-for="item in stoplist" :key="item.id">
       <view class="name">{{item.name}} <text style="font-weight: normal;margin-left: 10px;">已停用</text></view>
-      <view class="mobile">{{item.name}}</view>
+      <view class="mobile">{{item.mobile}}</view>
     </navigator>
 
     <view class="add">
@@ -66,20 +66,6 @@
       async getBuyerList(){
          this.buyerList=await getBuyerListRequest()
       },
-      // 获取全部买家数据列表
-      // async getBuyerList() {
-      //   const {
-      //     data: res
-      //   } = await uni.$http.get('api/buyers')
-      //   console.log('res ', res)
-      //   this.buyerList = res.data.map(item => {
-      //     return {
-      //       id: item.id,
-      //       ...item.attributes
-      //     }
-      //   })
-      //   // console.log('this.buyerList ', this.buyerList)
-      // },
       // 搜索栏的input事件
       input(v) {
         console.log(v)

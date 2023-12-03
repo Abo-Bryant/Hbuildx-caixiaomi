@@ -37,7 +37,7 @@
     </uni-forms>
      <!-- 保存按钮 -->
     <view class="save">
-      <button class="btn" @click="submit">保存</button>
+      <button class="btn" @click="saveAddBuyer">保存</button>
     </view>
   </view>
 </template>
@@ -81,7 +81,7 @@
     methods: {
 
       // 触发提交表单
-      submit() {
+      saveAddBuyer() {
         // 1.校验
         this.$refs.form.validate().then(async (formres) => {
           console.log('表单数据信息：', formres);
@@ -96,6 +96,8 @@
           const {
             data: res
           } = await uni.$http.post('api/buyers', data)
+          // 请求出错的提示
+          if(res.data===null) return uni.$showMsg(res.error.message)
           console.log('res', res)
           // 3.轻提示
           uni.showToast({

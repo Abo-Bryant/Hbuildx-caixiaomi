@@ -20,7 +20,7 @@
     <!-- 货品分类 -->
     <goods-classify :valueKind="valueKind" @changeKind="doKind" @changeKindId="doKindId"></goods-classify>
     <!-- 保存按钮 -->
-    <view class="goods-save" @click="saveAdd">保存</view>
+    <view class="goods-save" @click="saveAddProduct">保存</view>
   </view>
 </template>
 
@@ -34,7 +34,7 @@
         // 货品名字
         valueName: '',
         // 货品分类的Id
-        KindId: '',
+        kindId: '',
         // 货品分类名字
         valueKind: '',
         // 货品的单价
@@ -63,8 +63,6 @@
              }],
         // 控制包装类型的下标
         currentIndex: 0,
-        // input的里层样式
-        placeholderStyle: "color:#96979b;font-size:16px;background-color:#f6f7fb;padding-left:10px;",
       };
     },
     onLoad() {
@@ -104,21 +102,21 @@
         console.log('打印', tallyValue)
         this.tallyValue = tallyValue
       },
-      doKindId(KindId) {
-        this.KindId = KindId
+      doKindId(kindId) {
+        this.kindId = kindId
       },
      // 保存按钮
-     async saveAdd() {
+     async saveAddProduct() {
        // 1.非空判断
         if(this.valueName==='') return uni.$showMsg('请输入货品名称')
         if(!this.valuePrice) return uni.$showMsg('请输入销售单价')
-        if(!this.KindId) return uni.$showMsg('请选择货品分类')
+        if(!this.kindId) return uni.$showMsg('请选择货品分类')
         // 2.发送请求
            let data ={
             "data": {
               name:this.valueName,
               state:true,
-              kind:this.KindId,
+              kind:this.kindId,
               weight:this.valueWeight,
               unit:this.pikerValue,
               packageType:this.packagingType,
@@ -127,6 +125,7 @@
           }
            const {data: res} = await uni.$http.post('api/products',data)
                console.log(res)
+               if(res.data===null) return uni.$showMsg(res.error.message) 
                // 3.轻提示
                uni.showToast({
                	title: '添加成功',

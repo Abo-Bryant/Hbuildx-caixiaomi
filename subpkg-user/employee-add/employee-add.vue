@@ -66,6 +66,8 @@
           }
         }
          const {data: res} = await uni.$http.post('api/employees',data)
+         // 请求出错的提示
+         if(res.data===null) return uni.$showMsg(res.error.message)
          // 3.轻提示
         uni.$showMsg('新增成功')
         // 4.返回上一级页面

@@ -3,27 +3,27 @@
     <!-- 每一行列表 -->
     <view class="item" v-for="item in kindList" :key="item.id">
       <view class="item-name">{{item.name}}</view>
-      <view class="item-put" @click="amend(item.name,item.id)">修改</view>
-      <view class="item-del" @click="del(item.id)"><uni-icons type="trash" color="#fa5151" size="30"></uni-icons> </view>
+      <view class="item-put" @click="amendKind(item.name,item.id)">修改</view>
+      <view class="item-del" @click="delKind(item.id)"><uni-icons type="trash" color="#fa5151" size="30"></uni-icons> </view>
     </view>
     <!-- 新增弹出框 -->
     <uni-popup ref="popup" type="dialog">
       <uni-popup-dialog ref="dialogInputRef" title='新增分类' placeholder='请输入分类名称' mode="input" message="成功消息"
-        :duration="2000" :before-close="true" @close="addCancel" @confirm="addConfirm"></uni-popup-dialog>
+        :duration="2000" :before-close="true" @close="addKindPopupCancel" @confirm="addKindPopupConfirm"></uni-popup-dialog>
     </uni-popup>
     <!-- 修改弹出框 -->
     <uni-popup ref="popupAmend" type="dialog">
       <uni-popup-dialog ref="dialogInputRef" title='新增分类' placeholder='请输入分类名称' mode="input" message="成功消息"
-        :duration="2000" :before-close="true" @close="amendCancel" @confirm="amendConfirm"></uni-popup-dialog>
+        :duration="2000" :before-close="true" @close="amendKindPopupCancel" @confirm="amendKindPopupConfirm"></uni-popup-dialog>
     </uni-popup>
     <!-- 删除弹出框 -->
     <uni-popup ref="popupDel" type="dialog">
-      <uni-popup-dialog mode="base" content="确定要删除改分类吗？删除后,分类的货品将移至未分类中,确定要删除吗？" @close="delClose"
-        @confirm="delConfirm"></uni-popup-dialog>
+      <uni-popup-dialog mode="base" content="确定要删除改分类吗？删除后,分类的货品将移至未分类中,确定要删除吗？" @close="delKindPopupClose"
+        @confirm="delKindPopupConfirm"></uni-popup-dialog>
     </uni-popup>
   <!-- 新增按钮 -->
   <view class="add">
-    <view class="add-btn" @click="add">
+    <view class="add-btn" @click="addKind">
       新增分类
     </view>
   </view>
@@ -58,6 +58,8 @@
           'populate[0]':'products'
         }
          const {data: res} = await uni.$http.get('api/kinds',params)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
          console.log('res',res)
          this.kindList=res.data.map(item=>{
            return {
@@ -70,7 +72,7 @@
          console.log('this.kindList',this.kindList)
       },
       // 点击修改按钮
-      amend(goodsKind,kindId){
+      amendKind(goodsKind,kindId){
         /*
         Args:
           goodsKind: 当前选中的分类的名字
@@ -81,11 +83,11 @@
         this.$refs.dialogInputRef.val=goodsKind
       },
       // 点击修改的取消
-      amendCancel(){
+      amendKindPopupCancel(){
          this.$refs.popupAmend.close()
       },
       // 点击修改的确认
-     async amendConfirm(value){
+     async amendKindPopupConfirm(value){
        /*
        Args:
          value: 修改弹出框的值
@@ -99,6 +101,8 @@
            }
          }
           const {data: res} = await uni.$http.put(`api/kinds/${this.amendId}`,data)
+         // 请求出错的提示
+         if(res.data===null) return uni.$showMsg(res.error.message)
           console.log(res)
           // 3.更新页面
           this.getKindList()
@@ -106,7 +110,7 @@
          this.$refs.popupAmend.close()
       },
      // 点击删除的icon
-     async del(kindId){
+     async delKind(kindId){
        /*
        Args:
          kindId: 当前选中的分类的Id
@@ -118,6 +122,8 @@
           'populate[0]':'products'
         }
           const {data: res} = await uni.$http.get(`api/kinds/${kindId}`,params)
+          // 请求出错的提示
+          if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.获取当前分类所有商品的id
           this.productIdList = res.data.attributes.products.data.map(item=>{
             return item.id
@@ -129,16 +135,18 @@
        }else{ // 否则直接删除
          console.log('直接删除')
          const {data: res} = await uni.$http.delete(`api/kinds/${this.delId}`)
+         // 请求出错的提示
+         if(res.data===null) return uni.$showMsg(res.error.message) 
          // 5.更新页面
          this.getKindList()
        }
       },
      // 点击删除弹出框的取消
-      delClose(){
+      delKindPopupClose(){
          this.$refs.popupDel.close()
       },
       // 点击删除弹出框的确认
-     async delConfirm(){
+     async delKindPopupConfirm(){
         console.log('this.productIdList',this.productIdList)
          // 1.将当前分类的商品的关联id改为未分类的
         let data = {
@@ -148,10 +156,14 @@
         }
         this.productIdList.forEach(async(item)=>{
            const {data: res} = await uni.$http.put(`api/products/${item}`,data)
+           // 请求出错的提示
+           if(res.data===null) return uni.$showMsg(res.error.message)
            console.log('123456',res)
         })
         // 2.删除掉当前分类
         const {data: res} = await uni.$http.delete(`api/kinds/${this.delId}`)
+       // 请求出错的提示
+       if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.更新页面
         this.getKindList()
        
@@ -159,16 +171,16 @@
         
       },
       // 点击新增按钮
-      add(){
+      addKind(){
         this.$refs.popup.open()
       },
       // 点击新增的取消
-      addCancel() {
+      addKindPopupCancel() {
         this.$refs.popup.close()
         this.$refs.dialogInputRef.val = ''
       },
       // 点击新增的确认
-      async addConfirm(value) {
+      async addKindPopupConfirm(value) {
         /*
         Args:
           value: 新增弹出框的值
@@ -182,6 +194,8 @@
           }
         }
          const {data: res} = await uni.$http.post('api/kinds',data)
+         // 请求出错的提示
+         if(res.data===null) return uni.$showMsg(res.error.message)
          // 3.关闭弹窗
          this.$refs.popup.close()
          this.$refs.dialogInputRef.val = ''

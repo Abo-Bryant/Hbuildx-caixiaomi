@@ -25,6 +25,7 @@ export default {
     },
     delCart(state,payload){
       state.cart=state.cart.filter(item=>item.id!==payload)
+      this.commit('m_cart/saveToStorage')
     },
     updateCart(state,payload){
       console.log(payload)
@@ -34,6 +35,7 @@ export default {
           item.weightValue=payload.weightValue
         }
       })
+      this.commit('m_cart/saveToStorage')
     },
     saveToStorage(state){
       uni.setStorageSync('cart',JSON.stringify(state.cart))

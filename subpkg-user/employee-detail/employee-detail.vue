@@ -57,6 +57,8 @@
         const {
           data: res
         } = await uni.$http.get(`api/employees/${this.userId}`)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         console.log('res', res)
         this.userDetail = res.data
       },
@@ -72,6 +74,8 @@
           const {
             data: res
           } = await uni.$http.put(`api/employees/${this.userId}`, data)
+          // 请求出错的提示
+          if(res.data===null) return uni.$showMsg(res.error.message)
         } else {
           let data = {
             "data": {
@@ -81,6 +85,8 @@
           const {
             data: res
           } = await uni.$http.put(`api/employees/${this.userId}`, data)
+          // 请求出错的提示
+          if(res.data===null) return uni.$showMsg(res.error.message)
         }
         // 更新页面
         this.getUserDetail()

@@ -105,6 +105,8 @@
          const {
            data: res
          } = await uni.$http.get(`api/products/${ this.productId}`, params)
+         // 请求出错的提示
+         if(res.data===null) return uni.$showMsg(res.error.message)
          this.productDetail = {...res.data.attributes,id:res.data.id}
        }
         // 条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
@@ -112,11 +114,6 @@
          this.productDetail=this.cart.filter(item=>item.id==this.orderId)[0]
          this.weightValue=this.productDetail.weightValue
          console.log('123',this.productDetail)
-         // const {
-         //   data: res
-         // } = await uni.$http.get(`api/orders/${this.orderId}`)
-         // this.productDetail = res.data.attributes.productDetail
-         // this.weightValue=this.productDetail.weightValue
        }
      },
       // 点击下一项按钮
@@ -133,15 +130,6 @@
                  weightValue:+this.weightValue,
           }
           this.addToCart(goods)
-          // let data ={
-          //   "data": {
-          //    productDetail:{
-          //       ...this.productDetail,
-          //      weightValue:+this.weightValue,
-          //    }
-          //   }
-          // }
-          //  const {data: res} = await uni.$http.post('api/orders',data)
            // 3.轻提示
            uni.$showMsg('加入购物车')
            // 4.返回上一级页面
@@ -151,16 +139,6 @@
         }
          // 1.条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
         else if(this.orderId!==undefined){
-          // 2.发送请求
-          // let data = {
-          //   "data": {
-          //       productDetail: {
-          //         ...this.productDetail,
-          //         weightValue:+this.weightValue,
-          //       }
-          //     }
-          // }
-          //  const {data: res} = await uni.$http.put(`api/orders/${ this.orderId}`,data)
           const goods = {
             ...this.productDetail,
                  weightValue:+this.weightValue,

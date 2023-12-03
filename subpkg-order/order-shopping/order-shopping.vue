@@ -43,16 +43,16 @@
           </view>
         </view>
         <scroll-view scroll-y style="height: 315px;">
-          <navigator class="pro-item" v-for="(item,index) in cart" :key="item.id"
-            :url="`/subpkg-order/order-price/order-price?orderId=${item.id}`">
+          <view class="pro-item" v-for="(item,index) in cart" :key="item.id"
+             @click="doSomething(item.id)">
             <view class="right">{{index+1}}.{{item.name}}</view>
             <view class="left">
               <view>{{item.weightValue}}斤</view>
               <view style="margin-right: 10px;">{{item.price}}</view>
               <view>{{item.weightValue*item.price/100}}</view>
-               <view @click="productDel(item.id)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
+               <view @click.stop="productDel(item.id)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
             </view>
-          </navigator>
+          </view>
          
         </scroll-view>
       </view>
@@ -69,7 +69,7 @@
       </view>
       <view class="overbooking">
         <navigator class="overbooking-item"
-          :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}`">
+          :url="`/subpkg-order/order-checkstand/order-checkstand`">
           下单
         </navigator>
       </view>
@@ -106,42 +106,15 @@
     computed: {
             ...mapState('m_cart',['cart']),
             ...mapGetters('m_cart',['totalPrice','totalWeight']),
-      // 总金额
-      // totalPrice() {
-      //   let newPrice = 0
-      //   this.orderList.forEach(item => {
-      //     // console.log(item.attributes.productDetail.price)
-      //     // console.log(item.attributes.productDetail.weightValue)
-      //     newPrice += item.attributes.productDetail.price * item.attributes.productDetail.weightValue / 100
-      //   })
-      //   return newPrice
-      //   // console.log(newPrice)
-      // },
-      // 总重量
-      // totalWeight() {
-      //   let newWeight = 0
-      //   this.orderList.forEach(item => {
-      //     console.log(item.attributes.productDetail.price)
-      //     // console.log(item.attributes.productDetail.weightValue)
-      //     newWeight += item.attributes.productDetail.weightValue
-      //   })
-      //   return newWeight
-      // }
+
     },
     methods: {
-      
-      // 获取订单列表
-      // async getOrderList() {
-      //   const {
-      //     data: res
-      //   } = await uni.$http.get('api/orders')
-      //   this.orderList = res.data
-      //   // console.log(res.data)
-      // },
-       // 获取订单列表
-      // async getOrderList(){
-      //   this.orderList = await getOrderListRequest()
-      // },
+      doSomething(id){
+        console.log('点击')
+        uni.navigateTo({
+        	url:`/subpkg-order/order-price/order-price?orderId=${id}`
+        });
+      },
       ...mapMutations('m_cart',['delCart']),
       // 点击删除货品
       productDel(id) {
@@ -155,25 +128,8 @@
       },
       // 点击删除货品弹出框的确认
       async productDelConfirm() {
-        
-        // console.log(typeof this.productId);
-        // 1.发送请求
-        // const {
-        //   data: res
-        // } = await uni.$http.delete(`api/orders/${ this.delId}`)
-
         console.log(this.delId,this.cart)
         this.delCart(this.delId)
-        // 2.轻提示
-        // uni.showToast({
-        //   title: '删除成功',
-        //   duration: 5000,
-        //   icon: 'success'
-        // });
-        // 3.更新数据
-        // this.getOrderList()
-
-
       },
       //点击继续添加
       addpro() {

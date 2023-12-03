@@ -4,7 +4,7 @@
     <view class="relecancy-select" v-if="linkedBuyerList.length>0">
       <view class="text">已关联买家:</view>
       <view class="select" v-for="item in relecancyBuyerList">
-        {{item.name}}<uni-icons @click="disassociate(item.id)" style="margin-left: 8px;" color="#fe4938" type="clear"
+        {{item.name}}<uni-icons @click="disassociateRelecancyBuyer(item.id)" style="margin-left: 8px;" color="#fe4938" type="clear"
           size="16"></uni-icons>
       </view>
     </view>
@@ -19,19 +19,19 @@
       <view class="name">
         {{item.name}}
       </view>
-      <view class="xz" @click="choose(item.id)">
+      <view class="xz" @click="chooseRelecancyBuyer(item.id)">
         选择
       </view>
     </view>
     <!-- 点击选择按钮后的弹出框 -->
     <uni-popup ref="popup" type="dialog">
-      <uni-popup-dialog mode="base" title="温馨提示" content="确定与主买家关联吗?" @close="close"
-        @confirm="confirm"></uni-popup-dialog>
+      <uni-popup-dialog mode="base" title="温馨提示" content="确定与主买家关联吗?" @close="chooseRelecancyBuyerClose"
+        @confirm="chooseRelecancyBuyerConfirm"></uni-popup-dialog>
     </uni-popup>
     <!-- 点击小叉叉后的弹出框 -->
     <uni-popup ref="popupDel" type="dialog">
-      <uni-popup-dialog mode="base" title="温馨提示" content="确定要移出与主买家关联吗?" @close="closeDel"
-        @confirm="confirmDel"></uni-popup-dialog>
+      <uni-popup-dialog mode="base" title="温馨提示" content="确定要移出与主买家关联吗?" @close="disassociateRelecancyBuyerClose"
+        @confirm="disassociateRelecancyBuyerConfirm"></uni-popup-dialog>
     </uni-popup>
   </view>
 </template>
@@ -82,6 +82,8 @@
         const {
           data: res
         } = await uni.$http.get('api/buyers')
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         this.buyerList = res.data.map(item => {
           return {
             id: item.id,
@@ -92,6 +94,8 @@
         const {
           data: res1
         } = await uni.$http.get(`api/buyers/${this.buyerId}`)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         this.buyerDetail = res1.data
         this.linkedBuyerList = this.buyerDetail.attributes.linkedBuyerList
         // 找到有关联的买家
@@ -104,7 +108,7 @@
         this.relecancyBuyerList = [...map.values().filter(item => this.linkedBuyerList.includes(item.id))]
       },
       // 点击选择按钮
-      choose(buyerId) {
+      chooseRelecancyBuyer(buyerId) {
         /*
         Args:
           buyerId: 当前选择的买家的Id
@@ -113,11 +117,11 @@
         this.$refs.popup.open()
       },
        // 选择弹出框的关闭按钮
-      close() {
+      chooseRelecancyBuyerClose() {
         this.$refs.popup.close()
       },
         // 选择弹出框的确认按钮
-      async confirm() {
+      async chooseRelecancyBuyerConfirm() {
         // TODO 做一些其他的事情，手动执行 close 才会关闭对话框
         // 1.条件判断 如果是当前买家,不可关联
         if (this.relecancyBuyerId === +this.buyerId) {
@@ -141,6 +145,8 @@
           const {
             data: res
           } = await uni.$http.put(`api/buyers/${this.buyerId}`, data)
+          // 请求出错的提示
+          if(res.data===null) return uni.$showMsg(res.error.message)
           // 2.3.关闭popup窗口
           this.$refs.popup.close()
           // 2.4.轻提示
@@ -150,14 +156,17 @@
             duration: 2000 //持续时间为 2秒
           })
           // 2.5.刷新页面
-          uni.reLaunch({
-            url: `/subpkg-buyer/buyer-relevancy/buyer-relevancy?buyerId=${this.buyerId}`
+          uni.navigateBack({
+            delta: 1
           });
+          // uni.reLaunch({
+          //   url: `/subpkg-buyer/buyer-relevancy/buyer-relevancy?buyerId=${this.buyerId}`
+          // });
         }
 
       },
       // 点击取消关联的 x(叉叉)
-      disassociate(buyerId) {
+      disassociateRelecancyBuyer(buyerId) {
         /*
         Args:
           buyerId: 当前选中的关联的买家的Id
@@ -166,11 +175,11 @@
         this.$refs.popupDel.open()
       },
       // 删除弹出框的关闭按钮
-      closeDel() {
+      disassociateRelecancyBuyerClose() {
         this.$refs.popupDel.close()
       },
      // 删除弹出框的确认按钮
-      async confirmDel() {
+      async disassociateRelecancyBuyerConfirm() {
         // 1.更新linkedBuyerList的数据
         this.linkedBuyerList = this.linkedBuyerList.filter(item => item !== this.delBuyerId)
         console.log('this.linkedBuyerList', this.linkedBuyerList)
@@ -183,6 +192,8 @@
         const {
           data: res
         } = await uni.$http.put(`api/buyers/${this.buyerId}`, data)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.关闭popup窗口
         this.$refs.popupDel.close()
         // 4.轻提示
@@ -192,8 +203,11 @@
           duration: 2000 //持续时间为 2秒
         })
         // 5.刷新页面
-        uni.reLaunch({
-          url: `/subpkg-buyer/buyer-relevancy/buyer-relevancy?buyerId=${this.buyerId}`
+        // uni.reLaunch({
+        //   url: `/subpkg-buyer/buyer-relevancy/buyer-relevancy?buyerId=${this.buyerId}`
+        // });
+        uni.navigateBack({
+          delta: 1
         });
       }
     }

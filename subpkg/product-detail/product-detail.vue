@@ -34,27 +34,27 @@
       <goods-classify @changeKindId="doKindId" :valueKind="productDetail.kind.data.attributes.title"
         @changeKind="doKind"></goods-classify>
       <!-- 保存按钮 -->
-      <view @click="save" class="save">
+      <view @click="saveProductDetail" class="save">
         保存
       </view>
       <!-- 底部操作按钮 -->
       <view class="bottom">
-        <view @click="productDel">
+        <view @click="delProduct">
           <view class="bottom-btn del">删除货品</view>
         </view>
-        <view @click="productStop">
+        <view @click="stopProduct">
           <view class="bottom-btn stop">停用货品</view>
         </view>
       </view>
       <!-- 停用弹出框 -->
       <uni-popup ref="popup" type="dialog">
-        <uni-popup-dialog mode="base" content="确定要停用改商品?停用后货品无法售卖" @close="productStopClose"
-          @confirm="productStopConfirm"></uni-popup-dialog>
+        <uni-popup-dialog mode="base" content="确定要停用改商品?停用后货品无法售卖" @close="stopProductPopupClose"
+          @confirm="stopProductPopupConfirm"></uni-popup-dialog>
       </uni-popup>
       <!-- 删除弹出框 -->
       <uni-popup ref="popupDel" type="dialog">
-        <uni-popup-dialog mode="base" content="确定要删除改商品?" @close="productDelClose"
-          @confirm="productDelConfirm"></uni-popup-dialog>
+        <uni-popup-dialog mode="base" content="确定要删除改商品?" @close="delProductPopupClose"
+          @confirm="delProductPopupConfirm"></uni-popup-dialog>
       </uni-popup>
 
     </view>
@@ -83,12 +83,12 @@
         <view class="stop-txt">货品分类<text class="stop-text">{{ productDetail.kind.data.attributes.title}}</text></view>
       </view>
       <view class="delOrStop">
-        <view class="del" @click="productDel">删除货品</view>
-        <view class="stop" @click="productStart">启用货品</view>
+        <view class="del" @click="delProduct">删除货品</view>
+        <view class="stop" @click="startProduct">启用货品</view>
       </view>
       <uni-popup ref="popupDel" type="dialog">
-        <uni-popup-dialog mode="base" content="确定要删除改商品?" @close="productDelClose"
-          @confirm="productDelConfirm"></uni-popup-dialog>
+        <uni-popup-dialog mode="base" content="确定要删除改商品?" @close="delProductPopupClose"
+          @confirm="delProductPopupConfirm"></uni-popup-dialog>
       </uni-popup>
     </view>
   </view>
@@ -120,6 +120,8 @@
         const {
           data: res
         } = await uni.$http.get(`api/products/${ this.productId}`, params)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         this.productDetail = res.data.attributes
       },
       doName(valueName) {
@@ -150,22 +152,23 @@
         this.productDetail.unit = tallyValue
       },
       // 点击删除货品
-      productDel() {
+      delProduct() {
         // console.log('删除')
         this.$refs.popupDel.open()
       },
       // 点击删除货品弹出框的取消
-      productDelClose() {
+      delProductPopupClose() {
         this.$refs.popupDel.close()
       },
       // 点击删除货品弹出框的确认
-      async productDelConfirm() {
+      async delProductPopupConfirm() {
         // console.log(typeof this.productId);
         // 1.发送请求
         const {
           data: res
         } = await uni.$http.delete(`api/products/${ this.productId}`)
-
+         // 请求出错的提示
+         if(res.data===null) return uni.$showMsg(res.error.message)
         console.log(res)
         // 2.轻提示
         uni.showToast({
@@ -180,16 +183,16 @@
 
       },
       // 点击停用按钮
-      productStop() {
+      stopProduct() {
         // console.log('停止')
         this.$refs.popup.open()
       },
       // 点击停用货品弹出框的取消
-      productStopClose() {
+      stopProductPopupClose() {
         this.$refs.popup.close()
       },
       // 点击停用货品弹出框的确认
-      async productStopConfirm() {
+      async stopProductPopupConfirm() {
         // 发送请求
         let data = {
           "data": {
@@ -199,6 +202,8 @@
         const {
           data: res
         } = await uni.$http.put(`api/products/${ this.productId}`, data)
+       // 请求出错的提示
+       if(res.data===null) return uni.$showMsg(res.error.message)
         // 2.轻提示
         uni.showToast({
           title: '成功',
@@ -211,7 +216,7 @@
         });
       },
       // 点击启用货品
-      async productStart() {
+      async startProduct() {
         // 1.发送请求
         let data = {
           "data": {
@@ -221,11 +226,13 @@
         const {
           data: res
         } = await uni.$http.put(`api/products/${ this.productId}`, data)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         // 2.更新页面
         this.getProductDetail()
       },
       // 点击保存
-      async save() {
+      async saveProductDetail() {
         // 1.非空判断
         if (this.productDetail.name === '') return uni.$showMsg('请输入商品名称')
         // 2.发送请求
@@ -241,6 +248,8 @@
         const {
           data: res
         } = await uni.$http.put(`api/products/${ this.productId}`, data)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.轻提示
         uni.showToast({
           title: '修改成功',

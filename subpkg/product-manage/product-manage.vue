@@ -81,29 +81,10 @@
       },
     },
     methods: {
-     // async getKindList(){
-     //    const {data: res} = await uni.$http.get('api/kinds')
-     //    this.kindList=res.data.map(item=>{
-     //      return {
-     //        name:item.attributes.title,
-     //        id:item.id
-     //      }
-     //    })
-     // },
      async getKindList(){
        this.kindList = await getKindListRequest()
        console.log('this.kindList',this.kindList)
      },
-     // async getProductList(){
-     //    const {data: res} = await uni.$http.get('api/products')
-     //    this.productList = res.data.map(item=>{
-     //      return {
-     //        id:item.id,
-     //       ...item.attributes
-     //      }
-     //    })
-     //    this.productShowList=this.productList
-     // },
      async getProductList() {
        this.productList = await getProductListRequest()
        this.productShowList = this.productList
@@ -121,6 +102,8 @@
            'populate[0]':'products'
          }
            const {data: res} = await uni.$http.get(`api/kinds/${kindId}`,params)
+           // 请求出错的提示
+           if(res.data===null) return uni.$showMsg(res.error.message)
           this.productShowList = res.data.attributes.products.data.map(item => {
             return {
               id:item.id,

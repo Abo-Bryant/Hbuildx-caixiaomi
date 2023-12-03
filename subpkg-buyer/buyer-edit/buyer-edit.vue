@@ -49,7 +49,7 @@
     </uni-forms>
       <!-- 保存按钮 -->
     <view class="save">
-      <button class="btn" @click="submit">保存</button>
+      <button class="btn" @click="saveUpdateBuyer">保存</button>
     </view>
   </view>
 </template>
@@ -76,6 +76,8 @@
         const {
           data: res
         } = await uni.$http.get(`api/buyers/${this.buyerId}`)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         console.log('res', res.data)
         this.buyerDetail = res.data
         this.linkedBuyerList = this.buyerDetail.attributes.linkedBuyerList
@@ -85,7 +87,7 @@
         this.buyerDetail.attributes.state = !e.detail.value
       },
      // 点击保存按钮
-      async submit() {
+      async saveUpdateBuyer() {
         // 1.非空判断
         if (this.buyerDetail.attributes.name === '') return uni.$showMsg('请输入买家姓名')
         if (this.buyerDetail.attributes.mobile === '') return uni.$showMsg('请输入电话号码')
@@ -101,6 +103,8 @@
         const {
           data: res
         } = await uni.$http.put(`api/buyers/${this.buyerId}`, data)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.轻提示提示
         uni.showToast({
           title: '修改成功',

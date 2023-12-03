@@ -66,7 +66,7 @@
   import {
     getKindListRequest,
     getProductListRequest,
-    getOrderListRequest
+    // getOrderListRequest
   } from '../../api/api.js'
   export default {
     options: {
@@ -89,13 +89,13 @@
     onLoad() {
       this.getKindList()
       this.getProductList()
-      this.getOrderList()
+      // this.getOrderList()
     },
     onShow() {
       this.currentIndex = 0
       this.getKindList()
       this.getProductList()
-      this.getOrderList()
+      // this.getOrderList()
     },
     computed: {
       ...mapState('m_cart',['cart']),
@@ -122,19 +122,6 @@
         this.kindList = await getKindListRequest()
         console.log('this.kindList', this.kindList)
       },
-      // async getProductList() {
-      //   const {
-      //     data: res
-      //   } = await uni.$http.get('api/products')
-      //   this.productList = res.data.map(item => {
-      //     return {
-      //       id: item.id,
-      //       ...item.attributes
-      //     }
-      //   })
-      //   this.productShowList = this.productList
-      // },
-      
       // 获取商品
       async getProductList() {
         this.productList = await getProductListRequest()
@@ -155,6 +142,8 @@
           const {
             data: res
           } = await uni.$http.get(`api/kinds/${kindId}`, params)
+          // 请求出错的提示
+          if(res.data===null) return uni.$showMsg(res.error.message)
           this.productShowList = res.data.attributes.products.data.map(item => {
             return {
               id: item.id,
@@ -163,17 +152,6 @@
           })
         }
         this.currentIndex = index;
-      },
-      // async getOrderList() {
-      //   const {
-      //     data: res
-      //   } = await uni.$http.get('api/orders')
-      //   this.orderList = res.data
-      //   // console.log(res.data)
-      // },
-      // 获取订单
-      async getOrderList(){
-        this.orderList = await getOrderListRequest()
       },
       // 点击新增按钮
       add() {
@@ -201,6 +179,8 @@
         const {
           data: res
         } = await uni.$http.post('api/kinds', data)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.关闭弹窗
         this.$refs.popup.close()
         this.$refs.dialogInputRef.val = ''

@@ -33,7 +33,7 @@
             应收
           </view>
           <view class="receivable-num">
-            {{receivablePriceValue}}
+            {{totalPrice}}
           </view>
         </view>
         <!-- 优惠与多收 -->
@@ -97,6 +97,7 @@
 </template>
 
 <script>
+    import {mapState,mapGetters} from 'vuex'
   import {
     updateKeyboardValue
   } from '../../utils/index.js'
@@ -106,9 +107,10 @@
     },
     onLoad(option) {
       // this.actualPriceValue = option.totalPrice
-      this.receivablePriceValue = option.totalPrice
+      // this.receivablePriceValue = option.totalPrice
     },
     computed:{
+      ...mapGetters('m_cart',['totalPrice']),
       actualPriceValue(){
         if(this.discountPriceValue==='0'){
           return this.receivablePriceValue
@@ -124,7 +126,7 @@
     data() {
       return {
         // 应收金额
-        receivablePriceValue: null,
+        // receivablePriceValue: this.totalPrice,
         // 优惠或者多收金额
         discountOrOverchargePriceValue: '0',
         // // 金额

@@ -59,6 +59,8 @@
         const {
           data: res
         } = await uni.$http.get(`api/employees/${this.userId}`)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         console.log('res', res)
         this.userDetail = res.data
       },
@@ -76,6 +78,8 @@
         const {
           data: res
         } = await uni.$http.put(`api/employees/${this.userId}`, data)
+        // 请求出错的提示
+        if(res.data===null) return uni.$showMsg(res.error.message)
         // 3.轻提示
         uni.$showMsg('新增成功')
         // 4.返回上一级页面
