@@ -37,6 +37,10 @@ export default {
       })
       this.commit('m_cart/saveToStorage')
     },
+    clearCart(state,payload){
+      state.cart=payload
+      this.commit('m_cart/saveToStorage')
+    },
     saveToStorage(state){
       uni.setStorageSync('cart',JSON.stringify(state.cart))
     }

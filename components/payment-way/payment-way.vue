@@ -1,7 +1,7 @@
 <template>
   <view>
     <view class="way">
-      <view class="way-item " :class="{itemactive:currentIndex===index}"  v-for="(item,index) in list" @click="currentIndex=index">
+      <view class="way-item " :class="{itemactive:currentIndex===index}"  v-for="(item,index) in list" @click="dochoose(index,item.value)">
         <view class="item-icon">
           <uni-icons :color="currentIndex===index?'#fff':'#666666'" custom-prefix="iconfont" :type="item.label" size="20"></uni-icons>
         </view>
@@ -36,6 +36,12 @@
           value: '其他'
         }, ]
       };
+    },
+    methods:{
+      dochoose(index,value){
+        this.currentIndex=index
+        this.$emit('change',value)
+      }
     }
   }
 </script>

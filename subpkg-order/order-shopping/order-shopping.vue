@@ -69,7 +69,7 @@
       </view>
       <view class="overbooking">
         <navigator class="overbooking-item"
-          :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}`">
+          :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}&&buyerName=${buyerName}&&buyerId=${buyerId}`">
           下单
         </navigator>
       </view>
@@ -90,6 +90,7 @@
   export default {
     data() {
       return {
+        buyerId:0,
         buyerName:'临时客户',
         // 删除Id
         delId: "",

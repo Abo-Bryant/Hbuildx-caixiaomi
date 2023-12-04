@@ -95,7 +95,6 @@
       this.currentIndex = 0
       this.getKindList()
       this.getProductList()
-      // this.getOrderList()
     },
     computed: {
       ...mapState('m_cart',['cart']),
@@ -108,13 +107,6 @@
           id: 0
         }, ...this.kindList]
       },
-      // totalPrice() {
-      //   let newPrice = 0
-      //   this.orderList.forEach(item => {
-      //     newPrice += item.attributes.productDetail.price * item.attributes.productDetail.weightValue / 100
-      //   })
-      //   return newPrice
-      // },
     },
     methods: {
       // 获取分类

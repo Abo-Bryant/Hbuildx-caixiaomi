@@ -4,15 +4,15 @@
     <!-- 选择买家和时间 -->
     <view class="top">
       <!-- 选择买家 -->
-      <view class="buyer">
+      <navigator :url="`/subpkg-buyer/buyer-choose/buyer-choose`" class="buyer">
         <view class="buyuer-text">
           买家
         </view>
         <view class="buyuer-name">
-          <view>临时客户</view>
+          <view>{{buyerName}}</view>
           <view class="arrow"><uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons></view>
         </view>
-      </view>
+      </navigator>
       <!-- 选择收银时间 -->
       <view class="cashier-time">
         <view class="buyuer-text">
@@ -46,12 +46,10 @@
               多收
             </view>
           </view>
-          <view class="discounts-input" :class="{borderActive:isActual===false}"
-            v-if="isDiscountsOrOvercharge===true">
+          <view class="discounts-input" :class="{borderActive:isActual===false}" v-if="isDiscountsOrOvercharge===true">
             {{discountOrOverchargePriceValue}}
           </view>
-          <view class="discounts-input" :class="{borderActive:isActual===false}"
-            v-if="isDiscountsOrOvercharge===false">
+          <view class="discounts-input" :class="{borderActive:isActual===false}" v-if="isDiscountsOrOvercharge===false">
             {{discountOrOverchargePriceValue}}
           </view>
         </view>
@@ -73,7 +71,7 @@
           </view>
         </view>
         <!-- 收款方式组件-->
-        <payment-way></payment-way>
+        <payment-way @change="change"></payment-way>
         <!-- 占位符 -->
         <view style="height: 5px;"> </view>
       </view>
@@ -94,9 +92,9 @@
             整单赊账
           </view>
         </view>
-        <view class="outsidetwo" @click="back">
+        <view class="outsidetwo" @click="sure">
           <view class="bottom-sure">
-            确认
+            收银
           </view>
         </view>
       </view>
@@ -105,7 +103,11 @@
 </template>
 
 <script>
-    import {mapState,mapGetters} from 'vuex'
+  import {
+    mapMutations,
+    mapState,
+    mapGetters
+  } from 'vuex'
   import {
     updateKeyboardValue
   } from '../../utils/index.js'
@@ -115,7 +117,12 @@
     },
     data() {
       return {
-        price:this.totalPrice,
+        // 付款方式
+        paymentMethod: '现金',
+        // 买家姓名
+        buyerName: '',
+
+        price: this.totalPrice,
         // 应收金额
         receivablePriceValue: this.totalPrice,
         // 优惠或者多收金额
@@ -123,64 +130,67 @@
         // 控制 是优惠还是多收
         isDiscountsOrOvercharge: true,
         // 控制 是不是实收金额
-        isActual: true 
+        isActual: true,
+        buyerId: 0
       };
     },
     onLoad(option) {
       this.price = option.totalPrice
       this.receivablePriceValue = option.totalPrice
+      this.buyerName = option.buyerName
+      this.buyerId = +option.buyerId
     },
-    // watch:{
-    //   actualPriceValue(){
-        
-    //   }
-    // }
-    computed:{
-      ...mapGetters('m_cart',['totalPrice']),
-      actualPriceValue:{
-     get() {
-       if(this.discountOrOverchargePriceValue==='0'){
-         return this.receivablePriceValue
-       }else{
-         if(this.isDiscountsOrOvercharge===true){
-           return +this.receivablePriceValue-this.discountOrOverchargePriceValue
-         }else{
-           return +this.receivablePriceValue+this.discountOrOverchargePriceValue
-         }
-       }
-     },
-     set(newval){
-       console.log(newval)
-      this.receivablePriceValue=newval
-       // this.price = newval
-     }
-      },
-      owePriceone(){
-        if(this.isDiscountsOrOvercharge===true){
-          return +this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue
-        }else{
-          return +this.receivablePriceValue+this.discountOrOverchargePriceValue-this.actualPriceValue
+    computed: {
+      ...mapState('m_cart', ['cart']),
+      ...mapGetters('m_cart', ['totalPrice']),
+      actualPriceValue: {
+        get() {
+          if (this.discountOrOverchargePriceValue === '0') {
+            return this.receivablePriceValue
+          } else {
+            if (this.isDiscountsOrOvercharge === true) {
+              return +this.receivablePriceValue - this.discountOrOverchargePriceValue
+            } else {
+              return +this.receivablePriceValue + this.discountOrOverchargePriceValue
+            }
+          }
+        },
+        set(newval) {
+          console.log(newval)
+          this.receivablePriceValue = newval
+          // this.price = newval
         }
       },
-      owePrice(){
-        if(this.isDiscountsOrOvercharge===true){
-          return +this.receivablePriceValue-this.discountOrOverchargePriceValue-this.price
-        }else{
-          return +this.receivablePriceValue+this.discountOrOverchargePriceValue-this.price
+      owePriceone() {
+        if (this.isDiscountsOrOvercharge === true) {
+          return +this.receivablePriceValue - this.discountOrOverchargePriceValue - this.actualPriceValue
+        } else {
+          return +this.receivablePriceValue + this.discountOrOverchargePriceValue - this.actualPriceValue
+        }
+      },
+      owePrice() {
+        if (this.isDiscountsOrOvercharge === true) {
+          return +this.receivablePriceValue - this.discountOrOverchargePriceValue - this.price
+        } else {
+          return +this.receivablePriceValue + this.discountOrOverchargePriceValue - this.price
         }
       }
     },
-    
+
     methods: {
-       // 由key-words组件抛出的自定义事件
+      ...mapMutations('m_cart',['clearCart']),
+      // 由key-words组件抛出的自定义事件
       handleChange(e) {
-        console.log('e', e,this.receivablePriceValue,this.actualPriceValue)
+        console.log('this.receivablePriceValue', +this.receivablePriceValue, 'this.actualPriceValue', +this
+          .actualPriceValue)
+
         // 条件判断 判断需要修改的是实收金额还是优惠多收 true的话就是修改实收金额 ， false的话就是修改优惠多收
         if (this.isActual === true) {
+          // if(+this.actualPriceValue>=+this.receivablePriceValue||+this.price>=+this.receivablePriceValue) return uni.$showMsg('实收金额不得大于应收-优惠金额')
           this.price = updateKeyboardValue(this.price.toString(), e)
         } else {
-           // 条件判断 判断需要修改的是优惠金额还是多收金额 true的话就是修改优惠金额 ， false的话就是修改多收金额
-            this.discountOrOverchargePriceValue = updateKeyboardValue(this.discountOrOverchargePriceValue.toString(), e)
+          // 条件判断 判断需要修改的是优惠金额还是多收金额 true的话就是修改优惠金额 ， false的话就是修改多收金额
+          this.discountOrOverchargePriceValue = updateKeyboardValue(this.discountOrOverchargePriceValue.toString(), e)
         }
       },
       // 点击优惠
@@ -192,27 +202,80 @@
       doOvercharge() {
         this.isDiscountsOrOvercharge = false
         this.isActual = false
-        
+
       },
-      doisActual(){
-        this.isActual=true
+      // 点击实收
+      doisActual() {
+        this.isActual = true
         this.price = this.actualPriceValue
       },
+      change(value) {
+        this.paymentMethod = value
+      },
+      // 点击AC
       clear() {
-         // 条件判断 判断需要清空的是实收金额还是优惠多收 true的话就是清空实收金额 ， false的话就是清空优惠多收
+        // 条件判断 判断需要清空的是实收金额还是优惠多收 true的话就是清空实收金额 ， false的话就是清空优惠多收
         if (this.isActual === true) {
           this.price = '0'
         } else {
-           // 条件判断 判断需要清空的是优惠金额还是多收金额 true的话就是清空优惠金额 ， false的话就是清空多收金额
-          // if (this.isDiscountsOrOvercharge === true) {
-            this.discountOrOverchargePriceValue = '0'
-          // } else {
-          //   this.overchargePriceValue = '0'
-          // }
-
+          this.discountOrOverchargePriceValue = '0'
         }
+      },
+      async sure() {
+        console.log('买家id', this.buyerId, '买家姓名', this.buyerName, '应收金额', this.totalPrice, '是优惠还是多收', this
+          .isDiscountsOrOvercharge,
+          '优惠还是多收金额', this.discountOrOverchargePriceValue, '实收金额', this.actualPriceValue, '给了多少钱', this.price,
+          '下欠金额',
+          this.owePrice, '付款方式', this.paymentMethod)
+          
+        let orderInfo = {
+          // 应收金额
+          totalPrice: this.totalPrice,
+          // 是优惠还是多收
+          isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
+          // 优惠还是多收金额
+          discountOrOverchargePriceValue: this.discountOrOverchargePriceValue,
+          // 实收需要收的金额
+          actualPriceValue: this.actualPriceValue,
+          // 给了多少钱
+          price: +this.price,
+          // 欠了多少钱
+          owePrice: this.owePrice,
+          // 付款方式
+          paymentMethod: this.paymentMethod,
+        }
+        let buyerDetail = {
+          id: this.buyerId,
+          name: this.buyerName
+        }
+        // 获取员工详情
+
+        const {
+          data: res
+        } = await uni.$http.get(`api/employees/1`)
+        // 请求出错的提示
+        if (res.data === null) return uni.$showMsg(res.error.message)
+        console.log('res', res)
+        let userDetail = res.data
+        
+        console.log(orderInfo, buyerDetail, userDetail, this.cart)
+        let data = {
+          "data": {
+            productDetail: this.cart,
+            buyerDetail:buyerDetail,
+            orderInfo:orderInfo,
+            userDetail:userDetail
+          }
+        }
+        const {data: res1} = await uni.$http.post('api/orders', data)
+        // this.cart=[]
+        this.clearCart([])
+        uni.$showMsg('开单成功');
+        uni.navigateBack({  //uni.navigateTo跳转的返回，默认1为返回上一级
+        		delta: 2
+        	});
+        console.log('res1',res1)
       }
-      // doOvercharge(){},
 
     }
   }

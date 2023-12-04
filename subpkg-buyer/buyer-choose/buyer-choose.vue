@@ -54,17 +54,6 @@
          this.buyerList=await getBuyerListRequest()
          console.log( this.buyerList)
       },
-      // async getBuyerList(){
-      //    const {data: res} = await uni.$http.get('api/buyers')
-      //    console.log('res ',res )
-      //     this.buyerList = res.data.map(item=>{
-      //       return {
-      //         id:item.id,
-      //         ...item.attributes
-      //       }
-      //     })
-      //     console.log('this.buyerList ',this.buyerList )
-      // },
       doChoose(name,id){
         
         let pages = getCurrentPages(); // 当前页页⾯实例
@@ -72,6 +61,7 @@
         let prevPage = pages[pages.length -2]; // 上一页面实例
         console.log(prevPage,name,id)
         prevPage.$vm.buyerName = name
+        prevPage.$vm.buyerId = id
         uni.navigateBack({  //uni.navigateTo跳转的返回，默认1为返回上一级
         		delta: 1
         	});
