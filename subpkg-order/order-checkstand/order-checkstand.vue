@@ -56,12 +56,20 @@
           </view>
         </view>
         <!-- 实际收取金额 -->
-        <view class="realincome " :class="{borderActive:isActual===true}" @click="isActual=true">
+        <view class="realincome " v-if="isActual===false" :class="{borderActive:isActual===true}" @click="doisActual">
           <view class="realincome-text">实收</view>
           <view class="realincome-num">
             <view style="font-size: 18px;font-weight: 700;text-align: right;">{{actualPriceValue}}</view>
             <view style="font-size: 12px;font-weight: 700;color: #989898;">下欠 <text
-                style="color: #ec8b43;margin-left: 10px;">0</text></view>
+                style="color: #ec8b43;margin-left: 10px;">{{owePriceone}}</text></view>
+          </view>
+        </view>
+        <view class="realincome " v-if="isActual===true" :class="{borderActive:isActual===true}" @click="doisActual">
+          <view class="realincome-text">实收</view>
+          <view class="realincome-num">
+            <view style="font-size: 18px;font-weight: 700;text-align: right;">{{price}}</view>
+            <view style="font-size: 12px;font-weight: 700;color: #989898;">下欠 <text
+                style="color: #ec8b43;margin-left: 10px;">{{owePrice}}</text></view>
           </view>
         </view>
         <!-- 收款方式组件-->
@@ -105,54 +113,74 @@
     options: {
       styleIsolation: 'shared', // 解除样式隔离
     },
-    onLoad(option) {
-      // this.actualPriceValue = option.totalPrice
-      // this.receivablePriceValue = option.totalPrice
-    },
-    computed:{
-      ...mapGetters('m_cart',['totalPrice']),
-      actualPriceValue(){
-        if(this.discountPriceValue==='0'){
-          return this.receivablePriceValue
-        }
-        else if(this.discountPriceValue!=='0'&&this.isDiscountsOrOvercharge===false){
-          return +this.receivablePriceValue+this.discountPriceValue
-        }
-        else if(this.discountPriceValue!=='0'&&this.isDiscountsOrOvercharge===true){
-          return +this.receivablePriceValue-this.discountPriceValue
-        }
-      }
-    },
     data() {
       return {
+        price:this.totalPrice,
         // 应收金额
-        // receivablePriceValue: this.totalPrice,
+        receivablePriceValue: this.totalPrice,
         // 优惠或者多收金额
         discountOrOverchargePriceValue: '0',
-        // // 金额
-        // overchargePriceValue: '0',
-        // 实际金额
-        // actualPriceValue: null,
         // 控制 是优惠还是多收
         isDiscountsOrOvercharge: true,
         // 控制 是不是实收金额
         isActual: true 
       };
     },
+    onLoad(option) {
+      this.price = option.totalPrice
+      this.receivablePriceValue = option.totalPrice
+    },
+    // watch:{
+    //   actualPriceValue(){
+        
+    //   }
+    // }
+    computed:{
+      ...mapGetters('m_cart',['totalPrice']),
+      actualPriceValue:{
+     get() {
+       if(this.discountOrOverchargePriceValue==='0'){
+         return this.receivablePriceValue
+       }else{
+         if(this.isDiscountsOrOvercharge===true){
+           return +this.receivablePriceValue-this.discountOrOverchargePriceValue
+         }else{
+           return +this.receivablePriceValue+this.discountOrOverchargePriceValue
+         }
+       }
+     },
+     set(newval){
+       console.log(newval)
+      this.receivablePriceValue=newval
+       // this.price = newval
+     }
+      },
+      owePriceone(){
+        if(this.isDiscountsOrOvercharge===true){
+          return +this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue
+        }else{
+          return +this.receivablePriceValue+this.discountOrOverchargePriceValue-this.actualPriceValue
+        }
+      },
+      owePrice(){
+        if(this.isDiscountsOrOvercharge===true){
+          return +this.receivablePriceValue-this.discountOrOverchargePriceValue-this.price
+        }else{
+          return +this.receivablePriceValue+this.discountOrOverchargePriceValue-this.price
+        }
+      }
+    },
+    
     methods: {
        // 由key-words组件抛出的自定义事件
       handleChange(e) {
-        console.log('e', e)
+        console.log('e', e,this.receivablePriceValue,this.actualPriceValue)
         // 条件判断 判断需要修改的是实收金额还是优惠多收 true的话就是修改实收金额 ， false的话就是修改优惠多收
         if (this.isActual === true) {
-          this.actualPriceValue = updateKeyboardValue(this.actualPriceValue, e)
+          this.price = updateKeyboardValue(this.price.toString(), e)
         } else {
            // 条件判断 判断需要修改的是优惠金额还是多收金额 true的话就是修改优惠金额 ， false的话就是修改多收金额
-          if (this.isDiscountsOrOvercharge === true) {
-            this.discountPriceValue = updateKeyboardValue(this.discountPriceValue, e)
-          } else {
-            this.overchargePriceValue = updateKeyboardValue(this.overchargePriceValue, e)
-          }
+            this.discountOrOverchargePriceValue = updateKeyboardValue(this.discountOrOverchargePriceValue.toString(), e)
         }
       },
       // 点击优惠
@@ -166,17 +194,21 @@
         this.isActual = false
         
       },
+      doisActual(){
+        this.isActual=true
+        this.price = this.actualPriceValue
+      },
       clear() {
          // 条件判断 判断需要清空的是实收金额还是优惠多收 true的话就是清空实收金额 ， false的话就是清空优惠多收
         if (this.isActual === true) {
-          this.actualPriceValue = '0'
+          this.price = '0'
         } else {
            // 条件判断 判断需要清空的是优惠金额还是多收金额 true的话就是清空优惠金额 ， false的话就是清空多收金额
-          if (this.isDiscountsOrOvercharge === true) {
-            this.discountPriceValue = '0'
-          } else {
-            this.overchargePriceValue = '0'
-          }
+          // if (this.isDiscountsOrOvercharge === true) {
+            this.discountOrOverchargePriceValue = '0'
+          // } else {
+          //   this.overchargePriceValue = '0'
+          // }
 
         }
       }

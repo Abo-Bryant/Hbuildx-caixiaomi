@@ -69,7 +69,7 @@
       </view>
       <view class="overbooking">
         <navigator class="overbooking-item"
-          :url="`/subpkg-order/order-checkstand/order-checkstand`">
+          :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}`">
           下单
         </navigator>
       </view>
