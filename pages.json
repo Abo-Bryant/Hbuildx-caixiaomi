@@ -202,6 +202,26 @@
                 }
                 
                 }
+                ,{
+                    "path" : "order-detail/order-detail",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "订单详情",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "order-repaymoney/order-repaymoney",
+                    "style" :                                                                                    
+                {
+                   "navigationBarTitleText": "还款",
+                   "navigationBarBackgroundColor": "#fff",
+                   "enablePullDownRefresh": false
+                }
+                
+                }
             ]
     }
   ],

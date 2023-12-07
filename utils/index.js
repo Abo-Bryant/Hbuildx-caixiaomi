@@ -28,9 +28,9 @@ export function updateKeyboardValue(currentValue, keyboardValue) {
             currentValue = currentValue.slice(0, -1)
           }
         } else if (keyboardValue === ".") {
-          // console.log('点击了.')
+          console.log('点击了.')
           if (!decimalPoint.test(currentValue)) {
-            // console.log('添加.')
+            console.log('添加.',currentValue+keyboardValue)
             currentValue += keyboardValue
           } else {
             uni.$showMsg('只允许输入一个.')
@@ -42,7 +42,7 @@ export function updateKeyboardValue(currentValue, keyboardValue) {
             currentValue += keyboardValue
           }
         }
-        return +currentValue
+        return currentValue
       }
       
 // export const selectProductCategoryTool = async (index,kindId)=>{

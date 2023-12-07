@@ -44,13 +44,13 @@
         </view>
         <scroll-view scroll-y style="height: 315px;">
           <view class="pro-item" v-for="(item,index) in cart" :key="item.id"
-             @click="doSomething(item.id)">
+             @click="doSomething(index)">
             <view class="right">{{index+1}}.{{item.name}}</view>
             <view class="left">
               <view>{{item.weightValue}}斤</view>
               <view style="margin-right: 10px;">{{item.price}}</view>
-              <view>{{item.weightValue*item.price/100}}</view>
-               <view @click.stop="productDel(item.id)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
+              <view>{{(item.weightValue*item.price/100).toFixed(2)}}</view>
+               <view @click.stop="productDel(index)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
             </view>
           </view>
          
@@ -64,11 +64,14 @@
           合计:<text style="font-size: 20px;color: #f58b3c;margin-left: 5px;">{{totalPrice}}</text>元
         </view>
         <view class="total-weight">
-          总数 0 总重 {{totalWeight}}
+          总件数 {{cart.length}} 总重 {{totalWeight}}
         </view>
       </view>
       <view class="overbooking">
-        <navigator class="overbooking-item"
+        <view v-if="cart.length===0" class="overbooking-itemone" @click="hint">
+          下单
+        </view>
+        <navigator v-if="cart.length>0" class="overbooking-item"
           :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}&&buyerName=${buyerName}&&buyerId=${buyerId}`">
           下单
         </navigator>
@@ -90,7 +93,7 @@
   export default {
     data() {
       return {
-        buyerId:0,
+        buyerId:12,
         buyerName:'临时客户',
         // 删除Id
         delId: "",
@@ -118,9 +121,9 @@
       },
       ...mapMutations('m_cart',['delCart']),
       // 点击删除货品
-      productDel(id) {
+      productDel(index) {
         // console.log('删除')
-        this.delId = id
+        this.delId = index
         this.$refs.popupDel.open()
       },
       // 点击删除货品弹出框的取消
@@ -137,6 +140,9 @@
         uni.navigateBack({
           delta: 1
         });
+      },
+      hint(){
+        return uni.$showMsg('请添加商品')
       }
     }
   }
@@ -317,6 +323,17 @@
           border-radius: 48px;
           text-align: center;
           background-color: #1d9d60;
+          color: #fff;
+          font-weight: 600;
+          font-size: 18px;
+        }
+        .overbooking-itemone {
+          width: 95%;
+          height: 80%;
+          line-height: 48px;
+          border-radius: 48px;
+          text-align: center;
+          background-color: #b8b4a2;
           color: #fff;
           font-weight: 600;
           font-size: 18px;

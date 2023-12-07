@@ -28,7 +28,7 @@
         2023-11-15 10:02
       </view>
       <view class="state">
-        已结清
+        结清
       </view>
     </view>
     <view class="bottom">
@@ -42,30 +42,41 @@
   </view>
   
   <!-- 订单 -->
-  <view class="order-item">
+  <navigator :url="`/subpkg-order/order-detail/order-detail?orderId=${item.id}`" class="order-item" v-for="item in orderList" :key="item.id" >
     <view class="top">
       <view class="text">
        票号:0002
       </view>
       <view class="time">
-        2023-11-15 10:02
+        {{item.updatedAt}}
       </view>
-      <view class="state">
-        已结清
+      <view class="state-settle" v-if="item.orderInfo.orderState==='结清'">
+        结清
+      </view>
+      <view class="state-owe" v-if="item.orderInfo.orderState==='赊欠'">
+        赊欠
+      </view>
+      <view class="state-void" v-if="item.orderInfo.orderState==='作废'">
+        作废
       </view>
     </view>
     <view class="middle">
       <view class="name">
-        买家1 <text style="font-weight: 400;">(刘博)</text>
+        {{item.buyerDetail.attributes.name?item.buyerDetail.attributes.name:'临时客户'}} <text style="font-weight: 400;"></text>
       </view>
       <view class="money">
-        500
+        {{item.orderInfo.actualPriceValue}}
       </view>
     </view>
-    <view class="bottom">
-      日本萝卜、山东萝卜
+    <view class="bottom" >
+     <view class="proname">
+       <text v-for="i in item.productDetail" :key="i.id"> {{i.name + '、'}}</text>
+     </view>
+     <view class="owe" v-if="item.orderInfo.orderState==='赊欠'">
+       下欠：{{item.orderInfo.owePrice}}
+     </view>
     </view>
-  </view>
+  </navigator>
   </view>
 </template>
 
@@ -76,19 +87,35 @@
     },
     data() {
       return {
+        orderList:[],
         value:0,
         datetimerange:'',
          range: [
                 { value: 0, text: "全部" },
                 { value: 1, text: "已结清" },
                 { value: 2, text: "赊欠" },
-                { value: 3, text: "作废" },
-                { value: 4, text: "退款" },
-                { value: 5, text: "退货" },
+                { value: 3, text: "作废" }
               ],
       };
     },
+    onLoad() {
+      this.getOrderList()
+    },
+    onShow() {
+      this.getOrderList()
+    },
     methods:{
+      async getOrderList(){
+         const {data: res} = await uni.$http.get('api/orders')
+         this.orderList = res.data.map(item=>{
+           return {
+             ...item.attributes,
+             id:item.id
+           }
+         })
+         console.log(this.orderList)
+         
+      },
       input(v){
         console.log(v)
       },
@@ -199,12 +226,26 @@
         font-size: 14px;
         color: #989898;
       }
-      .state{
+      .state-settle{
         // width: ;
         margin-top: -5px;
         padding: 2px 20px;
         background-color: #dcf3df;
         color: #337a57;
+        border-radius:15px 0 0 15px ;
+      }
+      .state-owe{
+        margin-top: -5px;
+        padding: 2px 20px;
+        background-color: #ffd500;
+        color: #ffaa00;
+        border-radius:15px 0 0 15px ;
+      }
+      .state-void{
+        margin-top: -5px;
+        padding: 2px 20px;
+        background-color: #d4d4d4;
+        color: #999999;
         border-radius:15px 0 0 15px ;
       }
     }
@@ -222,7 +263,17 @@
       }
     }
     .bottom{
-      margin-left: 20px;
+     display: flex;
+     justify-content: space-between;
+     // font-size: 18px;
+ .proname{
+    margin-left: 20px;
+ }
+ .owe{
+   color: #ffaa00;
+    margin-right: 20px;
+ }
+      
     }
   }
 }

@@ -54,22 +54,24 @@
           </view>
         </view>
         <!-- 实际收取金额 -->
-        <view class="realincome " v-if="isActual===false" :class="{borderActive:isActual===true}" @click="doisActual">
+        <view class="realincome " :class="{borderActive:isActual===true}" @click="doisActual">
           <view class="realincome-text">实收</view>
           <view class="realincome-num">
-            <view style="font-size: 18px;font-weight: 700;text-align: right;">{{actualPriceValue}}</view>
-            <view style="font-size: 12px;font-weight: 700;color: #989898;">下欠 <text
-                style="color: #ec8b43;margin-left: 10px;">{{owePriceone}}</text></view>
-          </view>
-        </view>
-        <view class="realincome " v-if="isActual===true" :class="{borderActive:isActual===true}" @click="doisActual">
-          <view class="realincome-text">实收</view>
-          <view class="realincome-num">
-            <view style="font-size: 18px;font-weight: 700;text-align: right;">{{price}}</view>
+            <view v-if="isActual===false" style="font-size: 18px;font-weight: 700;text-align: right;">
+              {{actualPriceValue}}上</view>
+            <view v-if="isActual===true" style="font-size: 18px;font-weight: 700;text-align: right;">{{price}}下</view>
             <view style="font-size: 12px;font-weight: 700;color: #989898;">下欠 <text
                 style="color: #ec8b43;margin-left: 10px;">{{owePrice}}</text></view>
           </view>
         </view>
+        <!--  <view class="realincome "  :class="{borderActive:isActual===true}" @click="doisActual">
+          <view class="realincome-text">实收</view>
+          <view class="realincome-num">
+            
+            <view style="font-size: 12px;font-weight: 700;color: #989898;">下欠 <text
+                style="color: #ec8b43;margin-left: 10px;">{{owePrice}}</text></view>
+          </view>
+        </view> -->
         <!-- 收款方式组件-->
         <payment-way @change="change"></payment-way>
         <!-- 占位符 -->
@@ -131,7 +133,8 @@
         isDiscountsOrOvercharge: true,
         // 控制 是不是实收金额
         isActual: true,
-        buyerId: 0
+        buyerId: 12,
+        a: 0
       };
     },
     onLoad(option) {
@@ -139,6 +142,16 @@
       this.receivablePriceValue = option.totalPrice
       this.buyerName = option.buyerName
       this.buyerId = +option.buyerId
+    },
+    watch: {
+      price(newval, oldval) {
+        console.log('旧', oldval, '新', newval)
+        if (this.isDiscountsOrOvercharge === true) {
+          this.owePrice = +this.receivablePriceValue - this.discountOrOverchargePriceValue - newval
+        } else {
+          this.owePrice = +this.receivablePriceValue + this.discountOrOverchargePriceValue - newval
+        }
+      }
     },
     computed: {
       ...mapState('m_cart', ['cart']),
@@ -161,24 +174,37 @@
           // this.price = newval
         }
       },
-      owePriceone() {
-        if (this.isDiscountsOrOvercharge === true) {
-          return +this.receivablePriceValue - this.discountOrOverchargePriceValue - this.actualPriceValue
-        } else {
-          return +this.receivablePriceValue + this.discountOrOverchargePriceValue - this.actualPriceValue
+      owePrice: {
+        get() {
+          return this.a
+          if (this.isDiscountsOrOvercharge === true) {
+            this.a = +this.receivablePriceValue - this.discountOrOverchargePriceValue - this.actualPriceValue
+            return this.a
+          } else {
+            this.a = +this.receivablePriceValue + this.discountOrOverchargePriceValue - this.actualPriceValue
+            return this.a
+          }
+        },
+        set(val) {
+          // let a=0
+          console.log(val)
+          this.a = val
+          console.log(val, this.a)
+          // return 
         }
       },
-      owePrice() {
-        if (this.isDiscountsOrOvercharge === true) {
-          return +this.receivablePriceValue - this.discountOrOverchargePriceValue - this.price
-        } else {
-          return +this.receivablePriceValue + this.discountOrOverchargePriceValue - this.price
+      orderState() {
+        if (this.owePrice === 0) {
+          return '结清'
+        }
+        if (this.owePrice !== 0) {
+          return '赊欠'
         }
       }
     },
 
     methods: {
-      ...mapMutations('m_cart',['clearCart']),
+      ...mapMutations('m_cart', ['clearCart']),
       // 由key-words组件抛出的自定义事件
       handleChange(e) {
         console.log('this.receivablePriceValue', +this.receivablePriceValue, 'this.actualPriceValue', +this
@@ -187,21 +213,23 @@
         // 条件判断 判断需要修改的是实收金额还是优惠多收 true的话就是修改实收金额 ， false的话就是修改优惠多收
         if (this.isActual === true) {
           // if(+this.actualPriceValue>=+this.receivablePriceValue||+this.price>=+this.receivablePriceValue) return uni.$showMsg('实收金额不得大于应收-优惠金额')
-          this.price = updateKeyboardValue(this.price.toString(), e)
+          this.price = +updateKeyboardValue(this.price.toString(), e)
         } else {
           // 条件判断 判断需要修改的是优惠金额还是多收金额 true的话就是修改优惠金额 ， false的话就是修改多收金额
-          this.discountOrOverchargePriceValue = updateKeyboardValue(this.discountOrOverchargePriceValue.toString(), e)
+          this.discountOrOverchargePriceValue = +updateKeyboardValue(this.discountOrOverchargePriceValue.toString(), e)
         }
       },
       // 点击优惠
       doDiscount() {
         this.isDiscountsOrOvercharge = true
         this.isActual = false
+        this.price = this.actualPriceValue
       },
       // 点击多收
       doOvercharge() {
         this.isDiscountsOrOvercharge = false
         this.isActual = false
+        this.price = this.actualPriceValue
 
       },
       // 点击实收
@@ -222,34 +250,57 @@
         }
       },
       async sure() {
-        console.log('买家id', this.buyerId, '买家姓名', this.buyerName, '应收金额', this.totalPrice, '是优惠还是多收', this
+        console.log('订单状态', this.orderState, '买家id', this.buyerId, '买家姓名', this.buyerName, '应收金额', this.totalPrice,
+          '是优惠还是多收', this
           .isDiscountsOrOvercharge,
           '优惠还是多收金额', this.discountOrOverchargePriceValue, '实收金额', this.actualPriceValue, '给了多少钱', this.price,
           '下欠金额',
           this.owePrice, '付款方式', this.paymentMethod)
-          
+        if (this.buyerName === '临时客户' && this.owePrice > 0) return uni.$showMsg('临时客户不可以赊欠')
         let orderInfo = {
+          // 订单状态
+          orderState: this.orderState,
           // 应收金额
-          totalPrice: this.totalPrice,
+          totalPrice: +this.totalPrice,
           // 是优惠还是多收
           isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
           // 优惠还是多收金额
-          discountOrOverchargePriceValue: this.discountOrOverchargePriceValue,
+          discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
           // 实收需要收的金额
-          actualPriceValue: this.actualPriceValue,
+          actualPriceValue: +this.actualPriceValue,
           // 给了多少钱
           price: +this.price,
           // 欠了多少钱
           owePrice: this.owePrice,
           // 付款方式
           paymentMethod: this.paymentMethod,
+          orderlife: [{
+            // 订单状态
+            orderState: this.orderState,
+            // 应收金额
+            totalPrice: +this.totalPrice,
+            // 是优惠还是多收
+            isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
+            // 优惠还是多收金额
+            discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
+            // 实收需要收的金额
+            actualPriceValue: +this.actualPriceValue,
+            // 给了多少钱
+            price: +this.price,
+            // 欠了多少钱
+            owePrice: this.owePrice,
+            // 付款方式
+            paymentMethod: this.paymentMethod,
+          }]
         }
-        let buyerDetail = {
-          id: this.buyerId,
-          name: this.buyerName
-        }
+        const {
+          data: res2
+        } = await uni.$http.get(`api/buyers/${this.buyerId}`)
+        // 请求出错的提示
+        // if(res2.data===null) return uni.$showMsg(res.error.message)
+        console.log('res', res2.data)
+        let buyerDetail = res2.data
         // 获取员工详情
-
         const {
           data: res
         } = await uni.$http.get(`api/employees/1`)
@@ -257,24 +308,26 @@
         if (res.data === null) return uni.$showMsg(res.error.message)
         console.log('res', res)
         let userDetail = res.data
-        
+
         console.log(orderInfo, buyerDetail, userDetail, this.cart)
         let data = {
           "data": {
             productDetail: this.cart,
-            buyerDetail:buyerDetail,
-            orderInfo:orderInfo,
-            userDetail:userDetail
+            buyerDetail: buyerDetail,
+            orderInfo: orderInfo,
+            userDetail: userDetail
           }
         }
-        const {data: res1} = await uni.$http.post('api/orders', data)
+        const {
+          data: res1
+        } = await uni.$http.post('api/orders', data)
         // this.cart=[]
         this.clearCart([])
         uni.$showMsg('开单成功');
-        uni.navigateBack({  //uni.navigateTo跳转的返回，默认1为返回上一级
-        		delta: 2
-        	});
-        console.log('res1',res1)
+        uni.navigateBack({ //uni.navigateTo跳转的返回，默认1为返回上一级
+          delta: 2
+        });
+        console.log('res1', res1)
       }
 
     }

@@ -1,3 +1,4 @@
+// 合计的金额取小数点两位,总数改成总件数,计算器小数点,下欠的范围改一改
 // 获取分类
 export const getKindListRequest = async () => {
   const {
@@ -39,11 +40,14 @@ export const getBuyerListRequest = async () => {
     })
     return list
   }
-  // 获取订单
-  export const getOrderListRequest = async () => {
+  // 获取订单详情
+  export const getOrderDetailRequest = async (id) => {
     const {
       data: res
-    } = await uni.$http.get('api/orders')
-    let list = res.data
-    return list
+    } = await uni.$http.get(`api/orders/${id}`)
+   let detail ={
+          ...res.data.attributes,
+          id:res.data.id
+        }
+        return detail
   }

@@ -8,7 +8,7 @@ export default {
     totalPrice(state){
       let newPrice = 0
       state.cart.forEach(item=>newPrice += item.price * item.weightValue / 100)
-      return newPrice
+      return newPrice.toFixed(0)
     },
     totalWeight(state){
       let newWeight = 0
@@ -19,12 +19,22 @@ export default {
   
   mutations:{
     addToCart(state,payload){
-      state.cart.push(payload)
+      // 根据提交的商品id,查询购物车里面是否存在这件商品
+      const findResult = state.cart.find(item=>item.id===payload.id&&item.price===payload.price)
+      if(!findResult){
+         state.cart.push(payload)
+      }else{
+        console.log('商品的重量相加')
+        state.cart.forEach(item=>{
+          item.weightValue+=payload.weightValue
+        })
+      }
+     
       console.log(state.cart)
       this.commit('m_cart/saveToStorage')
     },
     delCart(state,payload){
-      state.cart=state.cart.filter(item=>item.id!==payload)
+      state.cart=state.cart.filter((item,index)=>index!==payload)
       this.commit('m_cart/saveToStorage')
     },
     updateCart(state,payload){

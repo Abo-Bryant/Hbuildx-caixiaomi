@@ -42,7 +42,7 @@
           })
           
            this.buyerList=this.buyerList.filter(item=>item.state!==false&&item.isMainBuyer)     
-           return [{id:0,name:'临时客户'},...this.buyerList]
+           return [{id:12,name:'临时客户'},...this.buyerList]
        
       },
        

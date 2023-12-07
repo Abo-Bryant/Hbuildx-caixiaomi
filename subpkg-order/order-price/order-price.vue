@@ -111,7 +111,7 @@
        }
         // 条件判断 如果当前页面orderId不为undefined,说明是从购物车页面点入的当前页面
        else if(this.orderId!==undefined){
-         this.productDetail=this.cart.filter(item=>item.id==this.orderId)[0]
+         this.productDetail=this.cart.filter((item,index)=>index==this.orderId)[0]
          this.weightValue=this.productDetail.weightValue
          console.log('123',this.productDetail)
        }
@@ -156,6 +156,7 @@
       handleChange(e) {
         // 条件判断 修改的是重量的值还是单价的值
         if (this.currentHighlight === true) {
+          console.log('this.weightValue',this.weightValue.toString())
           this.weightValue = updateKeyboardValue(this.weightValue.toString(), e)
         } else {
           this.productDetail.price = updateKeyboardValue(this.productDetail.price.toString(), e)

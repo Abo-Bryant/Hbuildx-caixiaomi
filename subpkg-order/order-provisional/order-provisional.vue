@@ -31,7 +31,7 @@
                 非定装
               </view>
               <view class="kindtype">
-                肉
+                <!-- 肉 -->
               </view>
             </navigator>
           </view>
