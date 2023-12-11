@@ -62,7 +62,7 @@
 </template>
 
 <script>
-  import {mapState,mapGetters} from 'vuex'
+  import {mapState,mapGetters,mapMutations} from 'vuex'
   import {
     getKindListRequest,
     getProductListRequest,
@@ -89,6 +89,7 @@
     onLoad() {
       this.getKindList()
       this.getProductList()
+      // this.clearCart([])
       // this.getOrderList()
     },
     onShow() {
@@ -109,6 +110,7 @@
       },
     },
     methods: {
+       ...mapMutations('m_cart',['clearCart']),
       // 获取分类
       async getKindList() {
         this.kindList = await getKindListRequest()

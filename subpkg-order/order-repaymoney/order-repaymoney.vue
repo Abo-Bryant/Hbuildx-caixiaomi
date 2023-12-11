@@ -90,6 +90,7 @@
 </template>
 
 <script>
+    const dayjs = require("dayjs");
     import {getOrderDetailRequest} from '../../api/api.js'
     import {
       updateKeyboardValue
@@ -192,16 +193,17 @@
         if(this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue>0){
           this.orderDetail.orderInfo.orderState='赊欠'
         }
-        console.log(this.orderDetail.orderInfo.orderState)
+        console.log('字符串',this.discountOrOverchargePriceValue)
         this.orderDetail.orderInfo.orderlife=[...this.orderDetail.orderInfo.orderlife,{
                 orderState:'还款' ,
                 totalPrice: this.receivablePriceValue,
                 isDiscountsOrOvercharge: true,
-                discountOrOverchargePriceValue: this.discountOrOverchargePriceValue,
+                discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
                 actualPriceValue:this.receivablePriceValue-this.discountOrOverchargePriceValue ,
                 price: this.actualPriceValue,
                 owePrice: this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue,
                 paymentMethod: this.paymentMethod,
+                 time:dayjs().format('YYYY-MM-DD HH:mm:ss')
         }]
         // 2.发送请求
         let data = {
@@ -210,7 +212,7 @@
               orderState:this.orderDetail.orderInfo.orderState,
               totalPrice: this.orderDetail.orderInfo.totalPrice,
               isDiscountsOrOvercharge: this.orderDetail.orderInfo.isDiscountsOrOvercharge,
-              discountOrOverchargePriceValue: this.orderDetail.orderInfo.discountOrOverchargePriceValue+this.discountOrOverchargePriceValue,
+              discountOrOverchargePriceValue: +(this.orderDetail.orderInfo.discountOrOverchargePriceValue+this.discountOrOverchargePriceValue),
               actualPriceValue: this.receivablePriceValue-this.discountOrOverchargePriceValue,
               price: this.orderDetail.orderInfo.price+this.actualPriceValue,
               owePrice: this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue,
@@ -223,6 +225,10 @@
           data: res
         } = await uni.$http.put(`api/orders/${this.orderId}`, data)
         console.log(res)
+        uni.navigateBack({ //uni.navigateTo跳转的返回，默认1为返回上一级
+          delta: 1
+        });
+        
       }
       
     }

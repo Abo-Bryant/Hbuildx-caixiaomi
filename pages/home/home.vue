@@ -1,7 +1,6 @@
 <template>
   <view class="page">
    home123
-   
    <view class="big">
      <view class="a"></view>
      <view class="b"></view>
@@ -14,24 +13,30 @@
 </template>
 
 <script>
-import {getKindListRequest} from '../../api/api.js'
+import {getKindListRequest,getOrderDetailRequest} from '../../api/api.js'
+import {timestampToTime}  from '../../utils/index.js'
+  const dayjs = require("dayjs");
   export default {
     data() {
       return {
-      kindList:[]
+      orderDetail:{}
       };
     },
     onLoad() {
-    this.getKindList()
+    this.getOrderDetail()
     },
     computed:{
    
     },
     methods: {
-    async getKindList(){
-      this.kindList = await getKindListRequest()
-      console.log('this.kindList',this.kindList)
-    }
+    async getOrderDetail(){
+      this.orderDetail = await getOrderDetailRequest(75)
+      // console.log('this.orderDetail',this.orderDetail.createdAt)
+        // console.log(this.orderDetail.createdAt + "的时间戳为：" + timestamp);
+        console.log( '时间',timestampToTime(this.orderDetail.createdAt));
+        console.log( '时间',dayjs().format('YYYY-MM-DD HH:mm:ss'));
+     
+    },
     }
   }
 </script>

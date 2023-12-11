@@ -1,3 +1,15 @@
+export function timestampToTime(time){
+  let timestamp = Date.parse(new Date(time).toString());
+   timestamp = timestamp ? timestamp : null;
+   let date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+   let Y = date.getFullYear() + '-';
+   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+   let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+   let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+   let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+   let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+   return Y + M + D + h + m + s;
+}
 export function transformListToTree (list, rootId) {
   const arr = []
   list.forEach(item => {
@@ -45,27 +57,3 @@ export function updateKeyboardValue(currentValue, keyboardValue) {
         return currentValue
       }
       
-// export const selectProductCategoryTool = async (index,kindId)=>{
-//   /*
-//   Args:
-//     index: 当前选中的分类的导航的下标
-//     kindId: 当前选中的分类的Id
-//   */
-//   if (kindId === 0) { //0表示全部商品的id
-//     this.productShowList = this.productList
-//   } else {
-//     let params = {
-//       'populate[0]': 'products'
-//     }
-//     const {
-//       data: res
-//     } = await uni.$http.get(`api/kinds/${kindId}`, params)
-//     this.productShowList = res.data.attributes.products.data.map(item => {
-//       return {
-//         id: item.id,
-//         ...item.attributes
-//       }
-//     })
-//   }
-//   this.currentIndex = index;
-// }

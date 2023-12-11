@@ -33,6 +33,18 @@ export default {
       console.log(state.cart)
       this.commit('m_cart/saveToStorage')
     },
+     echoCartData(state,payload){
+       // 根据提交的商品id,查询购物车里面是否存在这件商品
+       const findResult = state.cart.find(item=>item.id===payload.id&&item.price===payload.price)
+      if(!findResult){
+         state.cart.push(payload)
+      }else{
+        console.log('商品的重量相加')
+        state.cart.forEach(item=>{
+          item.weightValue+=payload.weightValue
+        })
+      }
+    },
     delCart(state,payload){
       state.cart=state.cart.filter((item,index)=>index!==payload)
       this.commit('m_cart/saveToStorage')

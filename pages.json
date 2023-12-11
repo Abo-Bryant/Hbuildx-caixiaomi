@@ -222,6 +222,16 @@
                 }
                 
                 }
+                ,{
+                    "path" : "order-detailCart/order-detailCart",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "订单购物车",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
     }
   ],

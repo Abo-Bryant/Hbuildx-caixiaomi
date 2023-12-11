@@ -1,4 +1,4 @@
-// 合计的金额取小数点两位,总数改成总件数,计算器小数点,下欠的范围改一改
+import {timestampToTime}  from '../utils/index.js'
 // 获取分类
 export const getKindListRequest = async () => {
   const {
@@ -46,8 +46,16 @@ export const getBuyerListRequest = async () => {
       data: res
     } = await uni.$http.get(`api/orders/${id}`)
    let detail ={
-          ...res.data.attributes,
-          id:res.data.id
+     createdAt:timestampToTime(res.data.attributes.createdAt),
+     updatedAt:timestampToTime(res.data.attributes.updatedAt),
+     productDetail:res.data.attributes.productDetail,
+     buyerDetail:res.data.attributes.buyerDetail,
+     orderInfo:res.data.attributes.orderInfo,
+     userDetail:res.data.attributes.userDetail,
+     // ...item.attributes,
+     id:res.data.id
+          // ...res.data.attributes,
+          // id:res.data.id
         }
         return detail
   }

@@ -1,88 +1,154 @@
 <template>
-  <view >
-    <shop-cart :buyerId="buyerId" :cart="cart" :buyerName="buyerName" :totalPrice="totalPrice" :totalWeight="totalWeight"></shop-cart>
+  <view class="page">
+    <!-- 选择买家 -->
+      <navigator class="buyer" :url="`/subpkg-buyer/buyer-choose/buyer-choose`">
+        <view class="call">
+          买家:
+          <text class="name" >
+            {{buyerName}}
+            <!-- 刘娜 -->
+          </text>
+        </view>
+        <view class="arrow"><uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons></view>
+      </navigator>
+      <!-- 订单货品 -->
+      <view class="order-production">
+        <!-- 订单货品 -->
+        <view class="order">
+          <view class="text">
+            订单货品
+          </view>
+          <view class="continueadd" @click="addpro" v-if="cart.length>0">
+            + 继续添加
+          </view>
+        </view>
+        <!-- 如果没有货品展示的页面 -->
+        <view class="product" v-if="cart.length===0">
+          <view class="text">
+            您还未添加任何货品进购物车
+          </view>
+          <view class="addpro" @click="addpro">
+            添加货品
+          </view>
+        </view>
+        
+        
+        <!-- 如果有货品展示的页面 -->
+        <view class="prolist" v-if="cart.length>0">
+          <!-- 名称 -->
+          <view class="first">
+            <view class="right">货品</view>
+            <view class="left">
+              <view>销量</view>
+              <view>单价</view>
+              <view>货款</view>
+              <view>操作</view>
+            </view>
+          </view>
+          <scroll-view scroll-y style="height: 315px;">
+            <view class="pro-item" v-for="(item,index) in cart" :key="item.id"
+               @click="doSomething(index)">
+              <view class="right">{{index+1}}.{{item.name}}</view>
+              <view class="left">
+                <view>{{item.weightValue}}斤</view>
+                <view style="margin-right: 10px;">{{item.price}}</view>
+                <view>{{(item.weightValue*item.price/100).toFixed(2)}}</view>
+                 <view @click.stop="productDel(index)"><uni-icons type="trash" color="#fa5151" size="24"></uni-icons></view>
+              </view>
+            </view>
+           
+          </scroll-view>
+        </view>
+        
+      </view>
+      <!-- 下方金额合计 -->
+      <view class="bottom-operation">
+        <view class="total">
+          <view class="total-price">
+            合计:<text style="font-size: 20px;color: #f58b3c;margin-left: 5px;">{{totalPrice}}</text>元
+          </view>
+          <view class="total-weight">
+            总件数 {{cart.length}} 总重 {{totalWeight}}
+          </view>
+        </view>
+        <view class="overbooking">
+          <view v-if="cart.length===0" class="overbooking-itemone" @click="hint">
+            下单
+          </view>
+          <navigator v-if="cart.length>0" class="overbooking-item"
+            :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}&&buyerName=${buyerName}&&buyerId=${buyerId}`">
+            下单
+          </navigator>
+        </view>
+      </view>
+      <!-- 删除弹出框 -->
+      <uni-popup ref="popupDel" type="dialog">
+        <uni-popup-dialog mode="base" content="确定要删除改商品?" @close="productDelClose"
+          @confirm="productDelConfirm"></uni-popup-dialog>
+      </uni-popup>
+    
+    
   </view>
 </template>
 
 <script>
-  import {getOrderDetailRequest} from '../../api/api.js'
-  import {mapState,mapGetters,mapMutations} from 'vuex'
-  // import {
-  //   getOrderListRequest
-  // } from '../../api/api.js'
+   import {mapState,mapGetters,mapMutations} from 'vuex'
   export default {
-     
+    name:"shop-cart",
+    props:{
+      buyerId:Number,
+      cart:Array,
+      totalWeight:Number,
+      totalPrice:Number,
+      buyerName:String
+    },
     data() {
       return {
-        buyerId:12,
-        buyerName:'临时客户',
-        // 删除Id
-        delId: "",
-        // 订单列表
-        orderList: [],
-        orderDetail:{},
-        orderId:0
+        delId:0,
       };
     },
-    onLoad(option) {
-      console.log('orderId',option.orderId)
-      this.orderId=option.orderId
+    computed:{
+      
     },
-    onShow() {
-    },
-    computed: {
-            ...mapState('m_cart',['cart']),
-            ...mapGetters('m_cart',['totalPrice','totalWeight']),
-
-    },
-    methods: {
-      // async getOrderDetail(){
-      //   console.log('this.orderId',this.orderId)
-      //   if(this.orderId!==undefined){
-      //      this.orderDetail=await getOrderDetailRequest(this.orderId)
-      //      this.echoCartData(...this.orderDetail.productDetail)
-      //   }else{
-      //     this.clearCart([])
-      //   }
-       
-      // },
-      // doSomething(id){
-      //   console.log('点击')
-      //   uni.navigateTo({
-      //   	url:`/subpkg-order/order-price/order-price?orderId=${id}`
-      //   });
-      // },
-      // ...mapMutations('m_cart',['delCart','echoCartData','clearCart','addToCart']),
+    methods:{
+       ...mapMutations('m_cart',['delCart','echoCartData','clearCart','addToCart']),
+       // 点击进入修改
+       doSomething(id){
+         console.log('点击')
+         uni.navigateTo({
+         	url:`/subpkg-order/order-price/order-price?orderId=${id}`
+         });
+       },
       // 点击删除货品
-      // productDel(index) {
-      //   // console.log('删除')
-      //   this.delId = index
-      //   this.$refs.popupDel.open()
-      // },
+      productDel(index) {
+        console.log('删除')
+        this.delId = index
+        this.$refs.popupDel.open()
+      },
       // 点击删除货品弹出框的取消
-      // productDelClose() {
-      //   this.$refs.popupDel.close()
-      // },
+      productDelClose() {
+        this.$refs.popupDel.close()
+      },
       // 点击删除货品弹出框的确认
-      // async productDelConfirm() {
-      //   console.log(this.delId,this.cart)
-      //   this.delCart(this.delId)
-      // },
+      async productDelConfirm() {
+        console.log(this.delId,this.cart)
+        this.delCart(this.delId)
+      },
       //点击继续添加
-      // addpro() {
-      //   uni.navigateBack({
-      //     delta: 1
-      //   });
-      // },
-      // hint(){
-      //   return uni.$showMsg('请添加商品')
-      // }
+      addpro() {
+        uni.navigateTo({
+        	url:`/subpkg-order/order-provisional/order-provisional`
+        });
+      },
+      hint(){
+        return uni.$showMsg('请添加商品')
+      }
     }
   }
 </script>
 
 <style lang="scss">
-  .page {
+ .page {
     height: 600px;
     width: 100%;
     background-color: #f4f5f7;

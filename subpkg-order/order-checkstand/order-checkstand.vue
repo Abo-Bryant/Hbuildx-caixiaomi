@@ -257,6 +257,7 @@
           '下欠金额',
           this.owePrice, '付款方式', this.paymentMethod)
         if (this.buyerName === '临时客户' && this.owePrice > 0) return uni.$showMsg('临时客户不可以赊欠')
+        if (this.owePrice <0 ) return uni.$showMsg('收款金额不能大于优惠后的应收金额,请核对')
         let orderInfo = {
           // 订单状态
           orderState: this.orderState,

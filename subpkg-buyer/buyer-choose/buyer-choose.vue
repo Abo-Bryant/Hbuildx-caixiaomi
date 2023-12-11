@@ -41,7 +41,7 @@
               item.isMainBuyer=!linklist.includes(item.id)
           })
           
-           this.buyerList=this.buyerList.filter(item=>item.state!==false&&item.isMainBuyer)     
+           this.buyerList=this.buyerList.filter(item=>item.state!==false&&item.isMainBuyer&&item.name!=='临时客户')     
            return [{id:12,name:'临时客户'},...this.buyerList]
        
       },

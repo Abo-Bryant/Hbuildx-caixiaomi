@@ -16,7 +16,7 @@
         电话 : {{orderDetail.buyerDetail.attributes.mobile}}
       </view>
       <view class="billing">
-        开单 : 2023-12-05 14:22  <text v-if="orderDetail.orderInfo.orderState==='结清'">收银:2023-12-05 14:22</text><text v-if="orderDetail.orderInfo.orderState==='赊欠'">赊欠:2023-12-05 14:22</text>
+        开单 : {{orderDetail.createdAt}}  <text v-if="orderDetail.orderInfo.orderState==='结清'">收银:{{orderDetail.updatedAt}}</text><text v-if="orderDetail.orderInfo.orderState==='赊欠'">赊欠:{{orderDetail.createdAt}}</text>
         <!-- 开单 : {{orderDetail.createdAt}}  赊欠:{{orderDetail.updatedAt}} -->
       </view>
       <view class="money">
@@ -82,30 +82,30 @@
         <view class="all">
           <text style="font-size: 20px; font-weight: 700;color: #1d9d60;"> {{i+1}}.</text>
           <text style="font-weight: 700;color: #1d9d60;margin-right: 15px;font-size: 16px;">{{v.orderState}}</text>
-          {{orderDetail.updatedAt}} 
+          {{v.time}} 
         </view>
         <view class="all">
           操作人员 : {{orderDetail.userDetail.attributes.name}}
         </view>
         <view class="all" v-if="v.orderState==='结清'||v.orderState==='赊欠'||v.orderState==='还款'">
-          应&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收 : {{v.actualPriceValue}}元 &nbsp;&nbsp;&nbsp;&nbsp;<text v-if="v.discountOrOverchargePriceValue!==0">(已优惠{{v.discountOrOverchargePriceValue}})</text>
+          应&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收 : {{v.actualPriceValue}}元 &nbsp;&nbsp;&nbsp;&nbsp;<text v-if="v.discountOrOverchargePriceValue!=0">(已优惠{{v.discountOrOverchargePriceValue}})</text>
         </view>
         <view class="all" v-if="v.orderState==='作废'">
           退&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;款 : {{v.price}}元
         </view>
         
         <view class="all" v-if="v.orderState==='还款'">
-          还款金额 : {{v.actualPriceValue}}元
+          还款金额 : {{v.price}}元
         </view>
         <view class="all" v-if="v.orderState==='作废'">
-          作废金额 : {{v.owePrice}}元
+          作废金额 : {{v.price}}元
         </view>
        
         <view class="all" v-if="v.orderState==='结清'">
           实&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收 : {{v.actualPriceValue}}元
         </view>
         <view class="all" v-if="v.orderState==='结清'||v.orderState==='还款'">
-          支付方式 : {{v.paymentMethod}}{{v.actualPriceValue}}元
+          支付方式 : {{v.paymentMethod}}{{v.price}}元
         </view>
         <view class="all" v-if="v.orderState==='赊欠'||v.orderState==='还款'">
           下&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欠 : {{v.owePrice}}元
@@ -123,11 +123,17 @@
       <uni-popup-dialog mode="base" title="确定要作废订单吗?" content="作废后将不可恢复" @close="cancellatOrderClose"
         @confirm="cancellatOrderConfirm"></uni-popup-dialog>
     </uni-popup>
+    <uni-popup ref="delpopup" type="dialog">
+      <uni-popup-dialog mode="base" title="确定要改单吗?"  @close="delOrderClose"
+        @confirm="delOrderConfirm"></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
 <script>
+  const dayjs = require("dayjs");
   import {getOrderDetailRequest} from '../../api/api.js'
+import {mapState,mapGetters,mapMutations} from 'vuex'
   export default {
     data() {
       return {
@@ -140,9 +146,20 @@
       this.orderId=option.orderId
       this.getOrderDetail()
     },
+    onShow() {
+      this.getOrderDetail()
+    },
+    computed:{
+         ...mapState('m_cart',['cart']),
+    },
     methods:{
       async getOrderDetail(){
         this.orderDetail=await getOrderDetailRequest(this.orderId)
+        this.orderDetail.orderInfo.orderlife[0]={
+          ...this.orderDetail.orderInfo.orderlife[0],
+          time:this.orderDetail.createdAt
+        }
+        // console.log(dayjs().format('YYYYMMDDHHmmss'))
       },
       cancellatOrder(){
         console.log('作废')
@@ -152,15 +169,17 @@
          this.$refs.cancellatpopup.close()
       },
       async cancellatOrderConfirm(){
+      
         this.orderDetail.orderInfo.orderlife=[...this.orderDetail.orderInfo.orderlife,{
                 orderState: "作废",
                 totalPrice: this.orderDetail.orderInfo.totalPrice,
                 isDiscountsOrOvercharge: this.orderDetail.orderInfo.isDiscountsOrOvercharge,
-                discountOrOverchargePriceValue: this.orderDetail.orderInfo.discountOrOverchargePriceValue,
+                discountOrOverchargePriceValue: +this.orderDetail.orderInfo.discountOrOverchargePriceValue,
                 actualPriceValue: this.orderDetail.orderInfo.actualPriceValue,
                 price: this.orderDetail.orderInfo.price,
                 owePrice: this.orderDetail.orderInfo.owePrice,
-                paymentMethod: this.orderDetail.orderInfo.paymentMethod
+                paymentMethod: this.orderDetail.orderInfo.paymentMethod,
+                time:dayjs().format('YYYY-MM-DD HH:mm:ss')
         }]
         // 2.发送请求
         let data = {
@@ -169,7 +188,7 @@
               orderState:'作废',
               totalPrice: this.orderDetail.orderInfo.totalPrice,
               isDiscountsOrOvercharge: this.orderDetail.orderInfo.isDiscountsOrOvercharge,
-              discountOrOverchargePriceValue: this.orderDetail.orderInfo.discountOrOverchargePriceValue,
+              discountOrOverchargePriceValue: +this.orderDetail.orderInfo.discountOrOverchargePriceValue,
               actualPriceValue: this.orderDetail.orderInfo.actualPriceValue,
               price: this.orderDetail.orderInfo.price,
               owePrice: this.orderDetail.orderInfo.owePrice,
@@ -198,7 +217,21 @@
         //     }
       },
       amendOrder(){
-        console.log('改单')
+        if(this.cart.length===0){
+          console.log('改单')
+           this.$refs.delpopup.open()
+        }else{
+          return uni.$showMsg('购物车中已经添加了货品,请清空购物车后再修改订单')
+        }
+       
+      },
+      delOrderClose(){
+         this.$refs.delpopup.close()
+      },
+      delOrderConfirm(){
+        uni.navigateTo({
+        	url:`/subpkg-order/order-detailCart/order-detailCart?orderId=${this.orderId}`
+        });
       }
     }
   }

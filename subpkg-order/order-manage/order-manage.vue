@@ -81,12 +81,14 @@
 </template>
 
 <script>
+  import {timestampToTime}  from '../../utils/index.js'
   export default {
     options: {
       styleIsolation: 'shared', // 解除样式隔离
     },
     data() {
       return {
+        creationOrderTime:'',
         orderList:[],
         value:0,
         datetimerange:'',
@@ -109,10 +111,17 @@
          const {data: res} = await uni.$http.get('api/orders')
          this.orderList = res.data.map(item=>{
            return {
-             ...item.attributes,
+             createdAt:timestampToTime(item.attributes.createdAt),
+             updatedAt:timestampToTime(item.attributes.updatedAt),
+             productDetail:item.attributes.productDetail,
+             buyerDetail:item.attributes.buyerDetail,
+             orderInfo:item.attributes.orderInfo,
+             userDetail:item.attributes.userDetail,
+             // ...item.attributes,
              id:item.id
            }
          })
+         
          console.log(this.orderList)
          
       },
