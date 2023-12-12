@@ -1,6 +1,6 @@
 <template>
   <view>
-    <shop-cart :cart="cart" :buyerName="buyerName" :totalPrice="totalPrice" :totalWeight="totalWeight"></shop-cart>
+    <shop-cart :orderId="orderId"  :cart="cart" :buyerId="buyerId" :buyerName="buyerName" :totalPrice="totalPrice" :totalWeight="totalWeight"></shop-cart>
   </view>
 </template>
 
@@ -11,7 +11,9 @@
     data() {
       return {
         orderDetail:{},
-        buyerName:''
+        buyerName:'',
+         buyerId:0,
+        orderId:0
       };
     },
     onLoad(option) {
@@ -31,12 +33,18 @@
        ...mapMutations('m_cart',['delCart','echoCartData','clearCart','addToCart']),
       async getOrderDetail(){
          this.orderDetail=await getOrderDetailRequest(this.orderId)
-         console.log('this.orderDetail.productDetail',...this.orderDetail.productDetail)
-         this.orderDetail.productDetail.forEach(item=>{
-           this.addToCart(item)
-         })
-         // this.addToCart(...this.orderDetail.productDetail)
+         console.log('this.orderDetail.productDetail',this.orderDetail)
+         // this.orderDetail.productDetail.forEach(item=>{
+         //   this.addToCart(item)
+         // })
+         if(this.cart.length===0){
+           this.clearCart(this.orderDetail.productDetail)
+         }
+         if(this.cart.length>0){
+           this.clearCart(this.cart)
+         }
          this.buyerName=this.orderDetail.buyerDetail.attributes.name
+         this.buyerId=this.orderDetail.buyerDetail.id
       }
     }
   }

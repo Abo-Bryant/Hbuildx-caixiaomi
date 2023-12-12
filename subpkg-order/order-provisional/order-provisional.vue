@@ -41,9 +41,10 @@
         </scroll-view>
       </view>
       <!-- 下部分按钮 -->
-      <navigator class="bottom" :url="`/subpkg-order/order-shopping/order-shopping`">
+    
+     <navigator class="bottom"  :url="orderId===0?`/subpkg-order/order-shopping/order-shopping`:`/subpkg-order/order-detailCart/order-detailCart?orderId=${orderId}`">
         <view class="total">
-          合计: {{totalPrice}} 元
+          {{orderId===0?'1':'2'}}合计: {{totalPrice}} 元
         </view>
         <view class="true">
           <view class="true-text">({{cart.length}}种)选好了</view>
@@ -52,6 +53,17 @@
           </view>
         </view>
       </navigator>
+    <!-- <navigator class="bottom" v-if="orderId===0" :url="`/subpkg-order/order-shopping/order-shopping`">
+        <view class="total">
+          购物车合计: {{totalPrice}} 元
+        </view>
+        <view class="true">
+          <view class="true-text">({{JSON.stringify(cart)}}种)选好了</view>
+          <view class="arrow">
+            <uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons>
+          </view>
+        </view>
+      </navigator> -->
     </view>
     <!-- 新增弹出框 -->
     <uni-popup ref="popup" type="dialog">
@@ -83,23 +95,33 @@
         // 选中的下标
         currentIndex: 0,
         // 订单列表
-        orderList: []
+        orderList: [],
+        orderId:0
       };
     },
-    onLoad() {
+    onLoad(option) {
+      this.orderId = option.orderId
       this.getKindList()
       this.getProductList()
+      console.log('cart.length', JSON.stringify(this.cart))
       // this.clearCart([])
       // this.getOrderList()
     },
+    // mounted()
     onShow() {
       this.currentIndex = 0
       this.getKindList()
       this.getProductList()
     },
+    watch:{
+      cart(newvalue,oldvalue){
+        console.log('cartnewvalue,cartoldvalue',newvalue,oldvalue)
+      }
+    },
     computed: {
-      ...mapState('m_cart',['cart']),
+      ...mapState('m_cart',['cart','test']),
       ...mapGetters('m_cart',['totalPrice']),
+      
       // 计算属性是函数， 但是在模板html上面是当做属性去用，不能加小括号
       leftList() {
         this.kindList = this.kindList.filter(item => item.name !== '未分类')
@@ -115,6 +137,7 @@
       async getKindList() {
         this.kindList = await getKindListRequest()
         console.log('this.kindList', this.kindList)
+        
       },
       // 获取商品
       async getProductList() {

@@ -76,7 +76,7 @@
             下单
           </view>
           <navigator v-if="cart.length>0" class="overbooking-item"
-            :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}&&buyerName=${buyerName}&&buyerId=${buyerId}`">
+            :url="`/subpkg-order/order-checkstand/order-checkstand?totalPrice=${totalPrice}&&buyerName=${buyerName}&&buyerId=${buyerId}&&orderId=${orderId}`">
             下单
           </navigator>
         </view>
@@ -86,8 +86,8 @@
         <uni-popup-dialog mode="base" content="确定要删除改商品?" @close="productDelClose"
           @confirm="productDelConfirm"></uni-popup-dialog>
       </uni-popup>
-    
-    
+    <!-- totalPrice=21500&buyerName=临时客户&buyerId=0&orderId=84 -->
+    <!-- totalPrice=100&buyerName=临时客户&buyerId=12&orderId=0 -->
   </view>
 </template>
 
@@ -96,6 +96,7 @@
   export default {
     name:"shop-cart",
     props:{
+      orderId:Number,
       buyerId:Number,
       cart:Array,
       totalWeight:Number,
@@ -137,7 +138,7 @@
       //点击继续添加
       addpro() {
         uni.navigateTo({
-        	url:`/subpkg-order/order-provisional/order-provisional`
+        	url:`/subpkg-order/order-provisional/order-provisional?orderId=${this.orderId}`
         });
       },
       hint(){

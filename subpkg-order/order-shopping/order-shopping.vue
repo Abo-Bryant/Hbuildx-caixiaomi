@@ -1,11 +1,11 @@
 <template>
   <view >
-    <shop-cart :buyerId="buyerId" :cart="cart" :buyerName="buyerName" :totalPrice="totalPrice" :totalWeight="totalWeight"></shop-cart>
+    <shop-cart :orderId="0" :buyerId="buyerId" :cart="cart" :buyerName="buyerName" :totalPrice="totalPrice" :totalWeight="totalWeight"></shop-cart>
   </view>
 </template>
 
 <script>
-  import {getOrderDetailRequest} from '../../api/api.js'
+  // import {getOrderDetailRequest} from '../../api/api.js'
   import {mapState,mapGetters,mapMutations} from 'vuex'
   // import {
   //   getOrderListRequest
@@ -19,8 +19,8 @@
         // 删除Id
         delId: "",
         // 订单列表
-        orderList: [],
-        orderDetail:{},
+        // orderList: [],
+        // orderDetail:{},
         orderId:0
       };
     },

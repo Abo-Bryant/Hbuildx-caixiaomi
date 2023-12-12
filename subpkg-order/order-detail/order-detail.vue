@@ -87,7 +87,7 @@
         <view class="all">
           操作人员 : {{orderDetail.userDetail.attributes.name}}
         </view>
-        <view class="all" v-if="v.orderState==='结清'||v.orderState==='赊欠'||v.orderState==='还款'">
+        <view class="all" v-if="v.orderState==='结清'||v.orderState==='赊欠'||v.orderState==='还款'||v.orderState==='改单'">
           应&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收 : {{v.actualPriceValue}}元 &nbsp;&nbsp;&nbsp;&nbsp;<text v-if="v.discountOrOverchargePriceValue!=0">(已优惠{{v.discountOrOverchargePriceValue}})</text>
         </view>
         <view class="all" v-if="v.orderState==='作废'">
@@ -101,13 +101,13 @@
           作废金额 : {{v.price}}元
         </view>
        
-        <view class="all" v-if="v.orderState==='结清'">
-          实&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收 : {{v.actualPriceValue}}元
+        <view class="all" v-if="v.orderState==='结清'||v.orderState==='改单'">
+          实&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收 : {{v.price}}元
         </view>
-        <view class="all" v-if="v.orderState==='结清'||v.orderState==='还款'">
+        <view class="all" v-if="v.orderState==='结清'||v.orderState==='还款'||v.orderState==='改单'">
           支付方式 : {{v.paymentMethod}}{{v.price}}元
         </view>
-        <view class="all" v-if="v.orderState==='赊欠'||v.orderState==='还款'">
+        <view class="all" v-if="v.orderState==='赊欠'||v.orderState==='还款'||v.orderState==='改单'">
           下&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欠 : {{v.owePrice}}元
         </view>
       </view>

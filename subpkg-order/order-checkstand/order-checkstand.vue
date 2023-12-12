@@ -105,6 +105,8 @@
 </template>
 
 <script>
+  const dayjs = require("dayjs");
+  import {getOrderDetailRequest} from '../../api/api.js'
   import {
     mapMutations,
     mapState,
@@ -134,14 +136,19 @@
         // 控制 是不是实收金额
         isActual: true,
         buyerId: 12,
-        a: 0
+        orderId:0,
+        a: 0,
+        orderDetail:{}
       };
     },
     onLoad(option) {
+      console.log('option.buyerId',option.buyerId)
       this.price = option.totalPrice
       this.receivablePriceValue = option.totalPrice
       this.buyerName = option.buyerName
       this.buyerId = +option.buyerId
+      this.orderId=option.orderId
+      
     },
     watch: {
       price(newval, oldval) {
@@ -256,26 +263,24 @@
           '优惠还是多收金额', this.discountOrOverchargePriceValue, '实收金额', this.actualPriceValue, '给了多少钱', this.price,
           '下欠金额',
           this.owePrice, '付款方式', this.paymentMethod)
+          console.log('this.orderId',this.orderId)
         if (this.buyerName === '临时客户' && this.owePrice > 0) return uni.$showMsg('临时客户不可以赊欠')
         if (this.owePrice <0 ) return uni.$showMsg('收款金额不能大于优惠后的应收金额,请核对')
-        let orderInfo = {
-          // 订单状态
-          orderState: this.orderState,
-          // 应收金额
-          totalPrice: +this.totalPrice,
-          // 是优惠还是多收
-          isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
-          // 优惠还是多收金额
-          discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
-          // 实收需要收的金额
-          actualPriceValue: +this.actualPriceValue,
-          // 给了多少钱
-          price: +this.price,
-          // 欠了多少钱
-          owePrice: this.owePrice,
-          // 付款方式
-          paymentMethod: this.paymentMethod,
-          orderlife: [{
+        // 买家详情
+        const {
+          data: res2
+        } = await uni.$http.get(`api/buyers/${this.buyerId}`)
+        let buyerDetail = res2.data
+        // 获取员工详情
+        const {
+          data: res
+        } = await uni.$http.get(`api/employees/1`)
+        if (res.data === null) return uni.$showMsg(res.error.message)
+        let userDetail = res.data
+  
+        // 如果是新增订单 this.orderId为0
+        if(this.orderId==0){
+          let orderInfo = {
             // 订单状态
             orderState: this.orderState,
             // 应收金额
@@ -292,43 +297,108 @@
             owePrice: this.owePrice,
             // 付款方式
             paymentMethod: this.paymentMethod,
-          }]
-        }
-        const {
-          data: res2
-        } = await uni.$http.get(`api/buyers/${this.buyerId}`)
-        // 请求出错的提示
-        // if(res2.data===null) return uni.$showMsg(res.error.message)
-        console.log('res', res2.data)
-        let buyerDetail = res2.data
-        // 获取员工详情
-        const {
-          data: res
-        } = await uni.$http.get(`api/employees/1`)
-        // 请求出错的提示
-        if (res.data === null) return uni.$showMsg(res.error.message)
-        console.log('res', res)
-        let userDetail = res.data
-
-        console.log(orderInfo, buyerDetail, userDetail, this.cart)
-        let data = {
-          "data": {
-            productDetail: this.cart,
-            buyerDetail: buyerDetail,
-            orderInfo: orderInfo,
-            userDetail: userDetail
+            orderlife: [{
+              // 订单状态
+              orderState: this.orderState,
+              // 应收金额
+              totalPrice: +this.totalPrice,
+              // 是优惠还是多收
+              isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
+              // 优惠还是多收金额
+              discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
+              // 实收需要收的金额
+              actualPriceValue: +this.actualPriceValue,
+              // 给了多少钱
+              price: +this.price,
+              // 欠了多少钱
+              owePrice: this.owePrice,
+              // 付款方式
+              paymentMethod: this.paymentMethod,
+            }]
           }
+          
+          console.log(orderInfo, buyerDetail, userDetail, this.cart)
+          let data = {
+            "data": {
+              productDetail: this.cart,
+              buyerDetail: buyerDetail,
+              orderInfo: orderInfo,
+              userDetail: userDetail
+            }
+          }
+          console.log('新增')
+          const {
+            data: res1
+          } = await uni.$http.post('api/orders', data)
+          uni.$showMsg('开单成功');
+        }else{
+          this.orderDetail=await getOrderDetailRequest(this.orderId)
+          this.orderDetail.orderInfo.orderlife[0]={
+            ...this.orderDetail.orderInfo.orderlife[0],
+            time:this.orderDetail.createdAt,
+            }
+            this.orderDetail.orderInfo={
+            // 订单状态
+            orderState: this.orderState,
+            // 应收金额
+            totalPrice: +this.totalPrice,
+            // 是优惠还是多收
+            isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
+            // 优惠还是多收金额
+            discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
+            // 实收需要收的金额
+            actualPriceValue: +this.actualPriceValue,
+            // 给了多少钱
+            price: +this.price,
+            // 欠了多少钱
+            owePrice: this.owePrice,
+            // 付款方式
+            paymentMethod: this.paymentMethod,
+            orderlife:[...this.orderDetail.orderInfo.orderlife,{
+                     // 订单状态
+                    orderState:'改单' ,
+                     // 应收金额
+                     totalPrice: +this.totalPrice,
+                     // 是优惠还是多收
+                     isDiscountsOrOvercharge: this.isDiscountsOrOvercharge,
+                     // 优惠还是多收金额
+                     discountOrOverchargePriceValue: +this.discountOrOverchargePriceValue,
+                     // 实收需要收的金额
+                     actualPriceValue: +this.actualPriceValue,
+                     // 给了多少钱
+                     price: +this.price,
+                     // 欠了多少钱
+                     owePrice: this.owePrice,
+                     // 付款方式
+                     paymentMethod: this.paymentMethod,
+                     time:dayjs().format('YYYY-MM-DD HH:mm:ss')
+            }]
+          }
+            let data = {
+              "data": {
+                productDetail: this.cart,
+                buyerDetail: buyerDetail,
+                orderInfo: this.orderDetail.orderInfo,
+                userDetail: userDetail
+              }
+            }
+          console.log('修改')
+          const {
+            data: res1
+          } = await uni.$http.put(`api/orders/${this.orderId}`, data)
+           uni.$showMsg('改单成功');
         }
-        const {
-          data: res1
-        } = await uni.$http.post('api/orders', data)
-        // this.cart=[]
+        // const {
+        //   data: res1
+        // } = await uni.$http.post('api/orders', data)
+        // uni.$showMsg('开单成功');
+        // // this.cart=[]
         this.clearCart([])
-        uni.$showMsg('开单成功');
+        
         uni.navigateBack({ //uni.navigateTo跳转的返回，默认1为返回上一级
           delta: 2
         });
-        console.log('res1', res1)
+        // console.log('res1', res1)
       }
 
     }
