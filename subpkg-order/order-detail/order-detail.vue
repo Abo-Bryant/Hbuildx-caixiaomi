@@ -80,7 +80,7 @@
       </view>
       <view class="orderinfo" v-for="(v,i) in orderDetail.orderInfo.orderlife">
         <view class="all">
-          <text style="font-size: 20px; font-weight: 700;color: #1d9d60;"> {{i+1}}.</text>
+          <!-- <text style="font-size: 20px; font-weight: 700;color: #1d9d60;"> {{v.time}}.</text> -->
           <text style="font-weight: 700;color: #1d9d60;margin-right: 15px;font-size: 16px;">{{v.orderState}}</text>
           {{v.time}} 
         </view>
@@ -155,10 +155,11 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
     methods:{
       async getOrderDetail(){
         this.orderDetail=await getOrderDetailRequest(this.orderId)
-        this.orderDetail.orderInfo.orderlife[0]={
-          ...this.orderDetail.orderInfo.orderlife[0],
-          time:this.orderDetail.createdAt
-        }
+       // console.log(this.orderDetail.orderInfo.orderlife)
+       //  this.orderDetail.orderInfo.orderlife[0]={
+       //    ...this.orderDetail.orderInfo.orderlife[this.orderDetail.orderInfo.orderlife.length-1],
+       //    time:this.orderDetail.createdAt
+       //  }
         // console.log(dayjs().format('YYYYMMDDHHmmss'))
       },
       cancellatOrder(){
@@ -170,7 +171,7 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
       },
       async cancellatOrderConfirm(){
       
-        this.orderDetail.orderInfo.orderlife=[...this.orderDetail.orderInfo.orderlife,{
+        this.orderDetail.orderInfo.orderlife=[{
                 orderState: "作废",
                 totalPrice: this.orderDetail.orderInfo.totalPrice,
                 isDiscountsOrOvercharge: this.orderDetail.orderInfo.isDiscountsOrOvercharge,
@@ -180,7 +181,7 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
                 owePrice: this.orderDetail.orderInfo.owePrice,
                 paymentMethod: this.orderDetail.orderInfo.paymentMethod,
                 time:dayjs().format('YYYY-MM-DD HH:mm:ss')
-        }]
+        },...this.orderDetail.orderInfo.orderlife]
         // 2.发送请求
         let data = {
           "data": {

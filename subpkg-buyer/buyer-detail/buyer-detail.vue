@@ -69,7 +69,7 @@
        <!-- 第二行 -->
        <view class="particulars">
          <!-- 数量 -->
-         <view class="num">
+         <navigator :url="`/subpkg-buyer/buyer-purchaseDetail/buyer-purchaseDetail`" class="num">
            <!-- 欠款总金额 -->
            <view class="oweTotal">
              0
@@ -78,7 +78,7 @@
            <view class="billTotal">
              0单
            </view>
-         </view>
+         </navigator>
          <!-- 明细 -->
          <view class="oweParticulars">
            <view class="text">

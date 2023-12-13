@@ -314,6 +314,7 @@
               owePrice: this.owePrice,
               // 付款方式
               paymentMethod: this.paymentMethod,
+              time:dayjs().format('YYYY-MM-DD HH:mm:ss')
             }]
           }
           
@@ -333,10 +334,10 @@
           uni.$showMsg('开单成功');
         }else{
           this.orderDetail=await getOrderDetailRequest(this.orderId)
-          this.orderDetail.orderInfo.orderlife[0]={
-            ...this.orderDetail.orderInfo.orderlife[0],
-            time:this.orderDetail.createdAt,
-            }
+          // this.orderDetail.orderInfo.orderlife[0]={
+          //   ...this.orderDetail.orderInfo.orderlife[this.orderDetail.orderInfo.orderlife.length-1],
+          //   time:this.orderDetail.createdAt,
+          //   }
             this.orderDetail.orderInfo={
             // 订单状态
             orderState: this.orderState,
@@ -354,7 +355,7 @@
             owePrice: this.owePrice,
             // 付款方式
             paymentMethod: this.paymentMethod,
-            orderlife:[...this.orderDetail.orderInfo.orderlife,{
+            orderlife:[{
                      // 订单状态
                     orderState:'改单' ,
                      // 应收金额
@@ -372,7 +373,7 @@
                      // 付款方式
                      paymentMethod: this.paymentMethod,
                      time:dayjs().format('YYYY-MM-DD HH:mm:ss')
-            }]
+            },...this.orderDetail.orderInfo.orderlife]
           }
             let data = {
               "data": {

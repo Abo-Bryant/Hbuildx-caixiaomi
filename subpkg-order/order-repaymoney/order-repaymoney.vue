@@ -193,8 +193,8 @@
         if(this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue>0){
           this.orderDetail.orderInfo.orderState='赊欠'
         }
-        console.log('字符串',this.discountOrOverchargePriceValue)
-        this.orderDetail.orderInfo.orderlife=[...this.orderDetail.orderInfo.orderlife,{
+        console.log('字符串',dayjs().format('YYYY-MM-DD HH:mm:ss'))
+        this.orderDetail.orderInfo.orderlife=[{
                 orderState:'还款' ,
                 totalPrice: this.receivablePriceValue,
                 isDiscountsOrOvercharge: true,
@@ -204,7 +204,7 @@
                 owePrice: this.receivablePriceValue-this.discountOrOverchargePriceValue-this.actualPriceValue,
                 paymentMethod: this.paymentMethod,
                  time:dayjs().format('YYYY-MM-DD HH:mm:ss')
-        }]
+        },...this.orderDetail.orderInfo.orderlife]
         // 2.发送请求
         let data = {
           "data": {

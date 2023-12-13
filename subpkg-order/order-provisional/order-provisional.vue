@@ -44,7 +44,7 @@
     
      <navigator class="bottom"  :url="orderId===0?`/subpkg-order/order-shopping/order-shopping`:`/subpkg-order/order-detailCart/order-detailCart?orderId=${orderId}`">
         <view class="total">
-          {{orderId===0?'1':'2'}}合计: {{totalPrice}} 元
+          合计: {{totalPrice}} 元
         </view>
         <view class="true">
           <view class="true-text">({{cart.length}}种)选好了</view>
@@ -53,17 +53,6 @@
           </view>
         </view>
       </navigator>
-    <!-- <navigator class="bottom" v-if="orderId===0" :url="`/subpkg-order/order-shopping/order-shopping`">
-        <view class="total">
-          购物车合计: {{totalPrice}} 元
-        </view>
-        <view class="true">
-          <view class="true-text">({{JSON.stringify(cart)}}种)选好了</view>
-          <view class="arrow">
-            <uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons>
-          </view>
-        </view>
-      </navigator> -->
     </view>
     <!-- 新增弹出框 -->
     <uni-popup ref="popup" type="dialog">

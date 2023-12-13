@@ -151,6 +151,16 @@
                 }
                 
                 }
+                ,{
+                    "path" : "buyer-purchaseDetail/buyer-purchaseDetail",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "买家采购详情",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
     },
     {
