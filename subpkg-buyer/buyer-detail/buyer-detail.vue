@@ -62,9 +62,9 @@
            当前赊欠(元)
          </view>
         <!-- 历史赊欠 -->
-         <view class="history">
+         <navigator class="history" :url="`/subpkg-buyer/buyer-historyOwe/buyer-historyOwe`">
            + 历史赊欠
-         </view>
+        </navigator>
        </view>
        <!-- 第二行 -->
        <view class="particulars">

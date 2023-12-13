@@ -41,8 +41,9 @@
         </scroll-view>
       </view>
       <!-- 下部分按钮 -->
-    
-     <navigator class="bottom"  :url="orderId===0?`/subpkg-order/order-shopping/order-shopping`:`/subpkg-order/order-detailCart/order-detailCart?orderId=${orderId}`">
+
+      <navigator class="bottom"
+        :url="orderId===0?`/subpkg-order/order-shopping/order-shopping`:`/subpkg-order/order-detailCart/order-detailCart?orderId=${orderId}`">
         <view class="total">
           合计: {{totalPrice}} 元
         </view>
@@ -63,7 +64,11 @@
 </template>
 
 <script>
-  import {mapState,mapGetters,mapMutations} from 'vuex'
+  import {
+    mapState,
+    mapGetters,
+    mapMutations
+  } from 'vuex'
   import {
     getKindListRequest,
     getProductListRequest,
@@ -85,7 +90,7 @@
         currentIndex: 0,
         // 订单列表
         orderList: [],
-        orderId:0
+        orderId: 0
       };
     },
     onLoad(option) {
@@ -102,15 +107,15 @@
       this.getKindList()
       this.getProductList()
     },
-    watch:{
-      cart(newvalue,oldvalue){
-        console.log('cartnewvalue,cartoldvalue',newvalue,oldvalue)
+    watch: {
+      cart(newvalue, oldvalue) {
+        console.log('cartnewvalue,cartoldvalue', newvalue, oldvalue)
       }
     },
     computed: {
-      ...mapState('m_cart',['cart','test']),
-      ...mapGetters('m_cart',['totalPrice']),
-      
+      ...mapState('m_cart', ['cart', 'test']),
+      ...mapGetters('m_cart', ['totalPrice']),
+
       // 计算属性是函数， 但是在模板html上面是当做属性去用，不能加小括号
       leftList() {
         this.kindList = this.kindList.filter(item => item.name !== '未分类')
@@ -121,12 +126,12 @@
       },
     },
     methods: {
-       ...mapMutations('m_cart',['clearCart']),
+      ...mapMutations('m_cart', ['clearCart']),
       // 获取分类
       async getKindList() {
         this.kindList = await getKindListRequest()
         console.log('this.kindList', this.kindList)
-        
+
       },
       // 获取商品
       async getProductList() {
@@ -149,7 +154,7 @@
             data: res
           } = await uni.$http.get(`api/kinds/${kindId}`, params)
           // 请求出错的提示
-          if(res.data===null) return uni.$showMsg(res.error.message)
+          if (res.data === null) return uni.$showMsg(res.error.message)
           this.productShowList = res.data.attributes.products.data.map(item => {
             return {
               id: item.id,
@@ -186,7 +191,7 @@
           data: res
         } = await uni.$http.post('api/kinds', data)
         // 请求出错的提示
-        if(res.data===null) return uni.$showMsg(res.error.message)
+        if (res.data === null) return uni.$showMsg(res.error.message)
         // 3.关闭弹窗
         this.$refs.popup.close()
         this.$refs.dialogInputRef.val = ''

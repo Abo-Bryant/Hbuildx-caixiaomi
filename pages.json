@@ -161,6 +161,16 @@
                 }
                 
                 }
+                ,{
+                    "path" : "buyer-historyOwe/buyer-historyOwe",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "历史赊欠录入",
+                    "navigationBarBackgroundColor": "#fff",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
     },
     {
