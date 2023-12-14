@@ -1,0 +1,121 @@
+{
+  "id": "4372660",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "741264",
+      "name": "现金-01",
+      "font_class": "cash",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "1177721",
+      "name": "其他",
+      "font_class": "qita",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "2681714",
+      "name": "微信支付",
+      "font_class": "wxpay",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "2681725",
+      "name": "支付宝支付",
+      "font_class": "alipay",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "27556408",
+      "name": "银联",
+      "font_class": "ai-pay-copy",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "2932835",
+      "name": "购物袋",
+      "font_class": "gouwudai",
+      "unicode": "e801",
+      "unicode_decimal": 59393
+    },
+    {
+      "icon_id": "6789077",
+      "name": "订单管理",
+      "font_class": "dingdanguanli-",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "8118860",
+      "name": "数据报表",
+      "font_class": "shujubaobiao",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "3427801",
+      "name": "打印",
+      "font_class": "icon-",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "12062556",
+      "name": "商品管理",
+      "font_class": "shangpinguanli",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "1680681",
+      "name": "员工管理",
+      "font_class": "yuangongguanli",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
+      "icon_id": "386506",
+      "name": "趋势图",
+      "font_class": "qushitu",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "716052",
+      "name": "银行卡",
+      "font_class": "yinxingqia",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "867244",
+      "name": "银行卡",
+      "font_class": "yinxingqia1",
+      "unicode": "e68e",
+      "unicode_decimal": 59022
+    },
+    {
+      "icon_id": "1047461",
+      "name": "收支流水",
+      "font_class": "shouzhiliushui",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "2959044",
+      "name": "考核记录",
+      "font_class": "kaohejilu",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    }
+  ]
+}

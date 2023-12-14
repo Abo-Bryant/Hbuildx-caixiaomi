@@ -25,13 +25,13 @@
           label: 'icon-cash',
           value: '现金'
         }, {
-          label: 'icon-weixinzhifu',
+          label: 'icon-wxpay',
           value: '微信'
         }, {
-          label: 'icon-zhifubaozhifu',
+          label: 'icon-alipay',
           value: '支付宝'
         }, {
-          label: 'icon-yinliandanse',
+          label: 'icon-ai-pay-copy',
           value: '银联'
         }, {
           label: 'icon-qita',

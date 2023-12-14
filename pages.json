@@ -4,7 +4,9 @@
       "path": "pages/home/home",
       "style": {
         "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
+        "navigationBarBackgroundColor": "#fff",
+        "enablePullDownRefresh": false,
+        "navigationStyle":"custom"//用户自定义（添加此处！！！！！）
       }
 
     },

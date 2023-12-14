@@ -32,15 +32,24 @@
     <!-- 订单导航 -->
     <view class="nav">
       <navigator class="nav-item" :url="'/subpkg-user/employee-manage/employee-manage'">
-        <view class="nav-icon iconOne"></view>
+        <view class="nav-icon">
+          <uni-icons color="#28b777"  custom-prefix="iconfont" type="icon-yuangongguanli"
+            size="30"></uni-icons>
+        </view>
         <text class="nav-text">员工管理</text>
       </navigator>
       <navigator class="nav-item" :url="'/subpkg/product-manage/product-manage'">
-        <view class="nav-icon iconTwo"></view>
+        <view class="nav-icon">
+          <uni-icons color="#28b777"  custom-prefix="iconfont" type="icon-shangpinguanli"
+            size="28"></uni-icons>
+        </view>
         <text class="nav-text">货品管理</text>
       </navigator>
       <navigator class="nav-item" url="/goodsAdd/goods_add/goods_manage">
-        <view class="nav-icon iconThree"></view>
+        <view class="nav-icon">
+          <uni-icons color="#28b777"  custom-prefix="iconfont" type="icon-icon-"
+            size="30"></uni-icons>
+        </view>
         <text class="nav-text">配件商城</text>
       </navigator>
     </view>
@@ -81,6 +90,7 @@
 </script>
 
 <style lang="scss">
+    @import "@/static/iconfont.css";
   .my-page {
     background-color: #f4f5f7;
     width: 100%;
@@ -195,21 +205,6 @@
           width: 30px;
           height: 30px;
           // background-color: #dd925e;
-        }
-
-        .iconOne {
-          background-image: url('../../static/icons/yuangongguanli.png');
-          background-size: contain;
-        }
-
-        .iconTwo {
-          background-image: url('../../static/icons/huopinguanli.png');
-          background-size: contain;
-        }
-
-        .iconThree {
-          background-image: url('../../static/icons/peijianshangcheng.png');
-          background-size: contain;
         }
       }
     }

@@ -3,7 +3,10 @@
     <view class="manage">
       <navigator :url="'/subpkg-order/order-manage/order-manage'" class="top">
         <view class="left">
-          <view class="icon"> </view>
+          <view class="icon"> 
+          <uni-icons color="#28b777"  custom-prefix="iconfont" type="icon-dingdanguanli-"
+            size="30"></uni-icons>
+          </view>
         </view>
         <view class="right">
           <view>订单管理</view>
@@ -11,7 +14,12 @@
         </view>
       </navigator>
       <navigator :url="'/subpkg-buyer/buyer-manage/buyer-manage'" class="bottom">
-        <view class="left"> <view class="icon"> </view></view>
+        <view class="left">
+          <view class="icon">
+            <uni-icons color="#28b777"  custom-prefix="iconfont" type="icon-gouwudai"
+              size="30"></uni-icons>
+            </view>
+          </view>
         <view class="right">
           <view>买家管理</view>
           <view class="arrow"><uni-icons color="#e1e1e1" type="forward" size="30"></uni-icons></view>
@@ -20,7 +28,10 @@
     </view>
     <view class="report-center">
       <view class="left">
-        <view class="icon"> </view>
+        <view class="icon">
+          <uni-icons color="#28b777"  custom-prefix="iconfont" type="icon-shujubaobiao"
+            size="30"></uni-icons>
+          </view>
       </view>
       <view class="right">
         <view>报表中心</view>
@@ -41,6 +52,7 @@
 </script>
 
 <style lang="scss">
+   @import "@/static/iconfont.css";
   .manage-page {
     height: 600px;
     width: 100%;
@@ -66,9 +78,6 @@
             margin-left: 20px;
             width: 30px;
             height: 30px;
-            // background-color: red;
-            background-image: url('../../static/icons/dingdan.png');
-            background-size: contain;
           }
         }
 
@@ -100,8 +109,8 @@
             width: 30px;
             height: 30px;
             // background-color: red;
-            background-image: url('../../static/icons/maijia.png');
-            background-size: contain;
+            // background-image: url('../../static/icons/maijia.png');
+            // background-size: contain;
           }
         }
         
@@ -135,8 +144,8 @@
           width: 30px;
           height: 30px;
           // background-color: red;
-          background-image: url('../../static/icons/baobiao.png');
-          background-size: contain;
+          // background-image: url('../../static/icons/baobiao.png');
+          // background-size: contain;
         }
       }
       
