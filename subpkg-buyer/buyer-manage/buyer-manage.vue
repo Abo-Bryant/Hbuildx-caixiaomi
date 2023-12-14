@@ -57,7 +57,7 @@
         this.buyerList.forEach(item => {
           item.isMainBuyer = !linklist.includes(item.id)
         })
-        return this.buyerList.filter(item => item.state !== false && item.isMainBuyer)
+        return this.buyerList.filter(item => item.state !== false && item.isMainBuyer&&item.name!=='临时客户')
 
       },
     },

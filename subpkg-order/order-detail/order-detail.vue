@@ -34,7 +34,8 @@
         </view>
       </view>
     </view>
-    <view class="product">
+    <!-- 货品明细 -->
+    <view class="product" v-if="productDetail.length>0">
       <view class="product-detail">
         货品明细
       </view>
@@ -65,6 +66,15 @@
           <view class="subtotal">{{item.weightValue*item.price/100}}</view>
 
       </view>
+    </view>
+    <!-- 赊欠记录附件 -->
+    <view class="attachment" v-if="productDetail.length===0">
+      <view class="text">
+        赊欠记录附件
+      </view>
+      <!-- <view class="image" > -->
+        <image v-for="item in orderDetail.orderInfo.imageList" :key="item" style="width: 100px; height: 100px;margin-left: 15px;" :src="item" mode="scaleToFill"></image>
+      <!-- </view> -->
     </view>
     <view class="user">
       <view class="cashier">
@@ -115,7 +125,7 @@
     <view class="kong"></view>
     <view class="bottom">
       <view class="cancellation" v-if="orderDetail.orderInfo.orderState!=='作废'" @click="cancellatOrder">作废</view>
-      <view class="amendment" v-if="orderDetail.orderInfo.orderState!=='作废'" @click="amendOrder">改单</view>
+      <view class="amendment" v-if="orderDetail.orderInfo.orderState!=='作废'&&productDetail.length>0" @click="amendOrder">改单</view>
       <navigator :url="`/subpkg-order/order-repaymoney/order-repaymoney?orderId=${orderDetail.id}`" class="repayment" v-if="orderDetail.orderInfo.orderState!=='作废'&&orderDetail.orderInfo.orderState==='赊欠'">还款</navigator>
     </view>
     <!-- 点击选择按钮后的弹出框 -->
@@ -138,7 +148,8 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
     data() {
       return {
         orderId:0,
-        orderDetail:{}
+        orderDetail:{},
+        productDetail:[]
       };
     },
     onLoad(option) {
@@ -155,6 +166,7 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
     methods:{
       async getOrderDetail(){
         this.orderDetail=await getOrderDetailRequest(this.orderId)
+        this.productDetail=this.orderDetail.productDetail
        // console.log(this.orderDetail.orderInfo.orderlife)
        //  this.orderDetail.orderInfo.orderlife[0]={
        //    ...this.orderDetail.orderInfo.orderlife[this.orderDetail.orderInfo.orderlife.length-1],
@@ -186,6 +198,10 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
         let data = {
           "data": {
             orderInfo:{
+              // 赊欠时间
+              oweTime:this.orderDetail.orderInfo.oweTime,
+              // 赊欠记录
+              imageList:this.orderDetail.orderInfo.imageList,
               orderState:'作废',
               totalPrice: this.orderDetail.orderInfo.totalPrice,
               isDiscountsOrOvercharge: this.orderDetail.orderInfo.isDiscountsOrOvercharge,
@@ -407,6 +423,25 @@ import {mapState,mapGetters,mapMutations} from 'vuex'
         line-height: 40px;
         text-align: center;
       }
+    }
+  }
+  .attachment{
+    width: 100%;
+    // height: 200px;
+    background-color: #fff;
+    padding: 10px;
+    .text{
+      margin-left: 20px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+    .image{
+      margin-left: 20px;
+      width: 100px;
+      height: 100px;
+      // background-color: red;
     }
   }
   .user{

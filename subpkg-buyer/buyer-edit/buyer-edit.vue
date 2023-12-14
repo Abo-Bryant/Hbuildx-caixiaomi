@@ -55,6 +55,7 @@
 </template>
 
 <script>
+  import {getBuyerDetailRequest} from '../../api/api.js'
   export default {
     data() {
       return {
@@ -73,13 +74,7 @@
     methods: {
       // 获取买家详情
       async getBuyerDetail() {
-        const {
-          data: res
-        } = await uni.$http.get(`api/buyers/${this.buyerId}`)
-        // 请求出错的提示
-        if(res.data===null) return uni.$showMsg(res.error.message)
-        console.log('res', res.data)
-        this.buyerDetail = res.data
+        this.buyerDetail =await getBuyerDetailRequest(this.buyerId)
         this.linkedBuyerList = this.buyerDetail.attributes.linkedBuyerList
       },
       // 停用启用按钮

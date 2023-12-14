@@ -209,6 +209,10 @@
         let data = {
           "data": {
             orderInfo:{
+              // 赊欠时间
+              oweTime:this.orderDetail.orderInfo.oweTime,
+              // 赊欠记录
+              imageList:this.orderDetail.orderInfo.imageList,
               orderState:this.orderDetail.orderInfo.orderState,
               totalPrice: this.orderDetail.orderInfo.totalPrice,
               isDiscountsOrOvercharge: this.orderDetail.orderInfo.isDiscountsOrOvercharge,

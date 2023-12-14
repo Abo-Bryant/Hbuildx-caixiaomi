@@ -40,6 +40,15 @@ export const getBuyerListRequest = async () => {
     })
     return list
   }
+  // 获取买家详情
+export const getBuyerDetailRequest = async (id)=>{
+ const {
+   data: res
+ } = await uni.$http.get(`api/buyers/${id}`)
+  if(res.data===null) return uni.$showMsg(res.error.message)
+ let detail =res.data
+ return detail
+}
   // 获取订单详情
   export const getOrderDetailRequest = async (id) => {
     const {

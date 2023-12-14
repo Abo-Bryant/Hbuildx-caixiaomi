@@ -62,7 +62,7 @@
            当前赊欠(元)
          </view>
         <!-- 历史赊欠 -->
-         <navigator class="history" :url="`/subpkg-buyer/buyer-historyOwe/buyer-historyOwe`">
+         <navigator class="history" :url="`/subpkg-buyer/buyer-historyOwe/buyer-historyOwe?buyerId=${buyerId}`">
            + 历史赊欠
         </navigator>
        </view>
@@ -176,11 +176,11 @@
   export default {
     data() {
       return {
-        buyerId:''
+        buyerId:0
       };
     },
     onLoad(option) {
-      this.buyerId=option.buyerId
+      this.buyerId=+option.buyerId
       console.log(typeof this.buyerId)
     }
   }
